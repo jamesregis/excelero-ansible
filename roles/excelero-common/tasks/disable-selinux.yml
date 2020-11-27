@@ -1,13 +1,15 @@
 ---
-
 - name: Check SELinux state
+  command: getenforce
   register: selinux_state
-
+  changed_when: false
+  failed_when: false
+  check_mode: no
 
 - name: Disable SELinux
   selinux:
     state: disable
-  when: selinux_state ....
+  when: selinux_state.stdout != 'Disabled'
   register: selinux_has_change_state
 
 - name: Reboot host and wait for it to restart
