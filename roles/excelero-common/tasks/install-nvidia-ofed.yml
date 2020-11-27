@@ -1,0 +1,26 @@
+---
+
+- name: Check if NVIDIA-Mellanox OFED is in /tmp
+  stat:
+    path: "{{ ofed_driver_path }}"
+  register: existing_ofed_driver_result
+
+- name: Download NVIDIA-Mellanox OFED
+  get_url:
+    url: "{{ nvidia_ofed_url }}"
+    dest: "{{ ofed_driver_path }}"
+    mode: '0440'
+  when: not existing_ofed_driver_result.stat.exists
+
+- name: "Unarchive {{ ofed_driver_path }}"
+  unarchive:
+    src: "{{ ofed_driver_path }}"
+    dest: /tmp
+    remote_src: yes
+
+- name: Install NVIDIA-Mellanox OFED driver
+  shell:
+     "/tmp/{{ ofed_driver_name }}/mlnxofedinstall --without-srp \
+       --without-isert --without-iser --without-rshim\
+       --without-mlnx-rdma-rxe --force"
+
