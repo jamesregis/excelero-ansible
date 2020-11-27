@@ -1,5 +1,5 @@
 ofed_driver_name: "MLNX_OFED_LINUX-5.1-2.5.8.0-rhel8.2-x86_64"
-nvidia_ofed_url: "http://content.mellanox.com/ofed/MLNX_OFED-5.1-2.5.8.0/{{ ofed_driver }}.tgz"
-ofed_driver_path: "/tmp/{{ ofed_driver_name}}.tgz"
+nvidia_ofed_url: "https://content.mellanox.com/ofed/MLNX_OFED-5.1-2.5.8.0/{{ ofed_driver_name }}.tgz"
+ofed_driver_path: "/tmp/{{ ofed_driver_name }}.tgz"
 
 tuned_active_builtin_profile: "latency-performance"
