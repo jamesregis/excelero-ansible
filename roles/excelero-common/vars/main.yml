@@ -3,3 +3,6 @@ nvidia_ofed_url: "https://content.mellanox.com/ofed/MLNX_OFED-5.1-2.5.8.0/{{ ofe
 ofed_driver_path: "/tmp/{{ ofed_driver_name }}.tgz"
 
 tuned_active_builtin_profile: "latency-performance"
+
+excelero_username: my_execlero_user
+excelero_password: my_execelero_password
