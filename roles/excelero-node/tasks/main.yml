@@ -26,6 +26,11 @@
 
 - name: Kernel tuning recommandations
   copy:
+    src: etc/modprode.d/nvmesh_options.conf
+    dest: /etc/modprode.d/nvmesh_options.conf
+    owner: root
+    group: root
+    mode: '0644'
 
 - name: Enable and start  NVMesh client and target
   systemd:
@@ -36,5 +41,5 @@
     enabled: yes
 
 - debug:
-    msg: Verify the nodes all check in to management and you now see 10 clients and 10 targets with 100 NVMe drives on the Dashboard page of the
-WebUI.
+    msg: "Verify the nodes all check in to management and you now see 10 clients and 10 targets with 100 NVMe drives on the Dashboard page of the
+WebUI."
