@@ -6,7 +6,6 @@
     name:
       - nodejs:12
       - nvmesh-management
-    state: present
 
 # TODO: a revoir
 - name: Ensure replicaset rs0 exists
