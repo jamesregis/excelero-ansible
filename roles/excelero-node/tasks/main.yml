@@ -25,8 +25,8 @@
     line: 'MLX5_RDDA_ENABLED="False"'
 
 - name: Kernel tuning recommandations
-  copy:
-    src: etc/modprode.d/nvmesh_options.conf
+  template:
+    src: etc/modprode.d/nvmesh_options.conf.j2
     dest: /etc/modprode.d/nvmesh_options.conf
     owner: root
     group: root
