@@ -31,7 +31,7 @@
     group: root
     mode: '0644'
 
-- name: Enable and start  NVMesh client and target
+- name: Enable and start NVMesh client and target
   systemd:
     name:
       - nvmeshclient
