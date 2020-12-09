@@ -1,0 +1,4 @@
+beegfs_repo: https://www.beegfs.io/release/beegfs_7.2/dists
+beegfs_repo_filename: beegfs-rhel8.repo
+beegfs_url_repo: "{{ beegfs_repo }}/{{ beegfs_repo_filename }}"
+# centos7: https://www.beegfs.io/release/beegfs_7.2/dists/beegfs-rhel7.repo
