@@ -1,0 +1,34 @@
+---
+
+- name: Install BeeGFS management package
+  package:
+    name: beegfs-mgmtd
+    state: installed
+
+- name: Create /beegfs directory for management
+  file:
+    path: "/beegfs/mgmtd"
+    state: directory
+
+- name: Add mount point to /etc/fstab
+  lineinfile:
+    path: /etc/fstab
+    regexp: '^/dev/nvmesh/mgmtd1'
+    line: '/dev/nvmesh/mgmtd1 /beegfs/mgmtd xfs rw,noatime,nodiratime,largeio,inode64,noauto 0 0'
+
+- name: Mount management volume
+  ansible.posix.mount:
+    path: /beegfs/mgmtd
+    fstype: xfs
+    state: present
+
+- name: Configure and start BeeGFS
+  shell:
+    "/opt/beegfs/sbin/beegfs-setup-mgmtd -p /beegfs/mgmtd"
+
+- name: Enable beegfs-mgmtd
+  systemd:
+    name: beegfs-mgmtd
+    enabled: yes
+
+
