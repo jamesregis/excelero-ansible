@@ -1,0 +1,43 @@
+---
+
+# TODO: make the list a variable
+- name: Create /beegfs directory and subdirectories
+  file:
+    path: "{{ directory_to_create }}"
+    state: directory
+  loop:
+    - /beegfs/meta-1
+    - /beegfs/meta-2
+    - /beegfs/storage-1
+    - /beegfs/storage-2
+    - /etc/beegfs/inst1.d
+    - /etc/beegfs/inst2.d
+  loop_control:
+    loop_var: directory_to_create
+
+- name: Add mount point to /etc/fstab
+  lineinfile:
+    path: /etc/fstab
+    regexp: '^/dev/nvmesh/{{ item.0 }}'
+    line: '/dev/nvmesh/{{ item.0 }} /beegfs/{{ item.1 }} xfs rw,noatime,nodiratime,largeio,inode64,noauto 0 0'
+  with_together:
+    - "{{ beegfs_dev_volume }}"
+    - ['meta-1', 'meta-2', 'storage-1', 'storage-2']
+
+- name: Mount BeeGFS volumes
+  ansible.posix.mount:
+    path: /beegfs/{{ item }}
+    fstype: xfs
+    state: present
+  loop:
+    - ['meta-1', 'meta-2', 'storage-1', 'storage-2']
+
+- name: Copy storage configuration to /etc
+  copy:
+    src: /etc/beegfs/beegfs-storage.conf
+    dest: "{{ configuration_directory }}"
+  loop:
+    - /etc/beegfs/inst1.d
+    - /etc/beegfs/inst2.d
+  loop_control:
+    loop_var: configuration_directory
