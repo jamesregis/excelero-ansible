@@ -2,3 +2,5 @@
 spread_resub_work: 2
 min_local_nvmeqs: 32
 max_local_nvmeqs: 32
+
+configured_nics: "ib1,ib2"

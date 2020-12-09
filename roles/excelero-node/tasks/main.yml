@@ -5,19 +5,21 @@
       - nvmesh-core
       - nvmesh-utils
 
-# TODO: a revoir
+# TODO: a revoir : template jinja
 - name: Initialize MANAGEMENT_SERVERS in /etc/nvmesh/nvmesh.conf
   lineinfile:
     path: "/etc/nvmesh/nvmesh.conf"
     regexp: "^MANAGEMENT_SERVERS="
-    line: MANAGEMENT_SERVERS='server1:4001,server2:4001,'
+    line: MANAGEMENT_SERVERS='{{ ",".join(groups.mgr) }}'
 
+# TODO: a revoir : template jinja
 - name: Initialize CONFIGURED_NICS in /etc/nvmesh/nvmesh.conf
   lineinfile:
     path: "/etc/nvmesh/nvmesh.conf"
     regexp: '^CONFIGURED_NICS='
     line: CONFIGURED_NICS="{{ configured_nics }}"
 
+# TODO: a revoir : template jinja
 - name: Disable RDDA transport
   lineinfile:
     path: "/etc/nvmesh/nvmesh.conf"
@@ -40,5 +42,5 @@
     enabled: yes
 
 - debug:
-    msg: "Verify the nodes all check in to management and you now see 10 clients and 10 targets with 100 NVMe drives on the Dashboard page of the
+    msg: "Verify the nodes and check in to management to see 10 clients and 10 targets with 100 NVMe drives on the Dashboard page of the
 WebUI."
