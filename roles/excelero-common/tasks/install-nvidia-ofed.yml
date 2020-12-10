@@ -12,9 +12,7 @@
     remote_src: yes
 
 - name: Install NVIDIA-Mellanox OFED driver
-  shell: |
-    "/tmp/{{ ofed_driver_name }}/mlnxofedinstall --without-srp \
-      --without-isert --without-iser --without-rshim \
-      --without-mlnx-rdma-rxe --force"
+  shell:
+    "/tmp/{{ ofed_driver_name }}/mlnxofedinstall --without-srp --without-isert --without-iser --without-rshim --without-mlnx-rdma-rxe --add-kernel-support --force"
   args:
     executable: /bin/bash
