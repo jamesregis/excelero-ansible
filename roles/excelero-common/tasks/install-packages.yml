@@ -1,0 +1,11 @@
+---
+
+- name: Install required packages
+  package:
+    name:
+      - createrepo
+      - gdb-headless
+      - rpm-build
+      - kernel-rpm-macros
+      - python36-devel
+    state: installed
