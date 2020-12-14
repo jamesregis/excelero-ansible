@@ -1,29 +1,27 @@
 ---
+- name: Add BeeGFS RHEL 8 repository
+  yum_repository:
+    name: beegfs
+    description: BeeGFS 7.2 (rhel8)
+    file: "{{ beegfs_repo_filename }}"
+    baseurl: "{{ beegfs_repo }}"
+    gpgkey: "{{ beegfs_gpgkey }}"
+    gpgcheck: no
 
-- name: Download BeeGFS repository file
-  get_url:
-    url: "{{ beegfs_url_repo }}"
-    # dest: "/etc/yum.repos.d/{{ beegfs_repo_filename }}"
-    dest: "/etc/yum.repos.d/beegfs-rhel.repo"
-    mode: '0644'
-    owner: root
-    group: root
-
-name: Install BeeGFS packages
-package:
-  name:
-    - beegfs-client
-    - beegfs-helperd
-    - beegfs-meta
-    - beegfs-storage
-    - libbeegfs-ib
-    - beegfs-client-devel
-  state: installed
+- name: Install BeeGFS packages
+  package:
+    name:
+      - beegfs-client
+      - beegfs-helperd
+      - beegfs-meta
+      - beegfs-storage
+      - libbeegfs-ib
+      - beegfs-client-devel
+    state: installed
 
 # TODO: check ansible_facts
 - name: Get NVMesh device name
-  command:
-    "ls /dev/nvmesh"
+  command: "ls /dev/nvmesh"
   register: nvmesh_device
 
 - set_fact:
@@ -43,7 +41,6 @@ package:
     fstype: xfs
     dev: "{{ nvmesh_device_path }}"
     opts: "-K -d su=4k,sw=8 -l version=2,su=4k -isize=512"
-
 # TODO: cpu pining for process
 # https://community.mellanox.com/s/article/howto-configure-and-test-beegfs-with-rdma
 # https://community.mellanox.com/s/article/understanding-numa-node-for-performance-benchmarks
