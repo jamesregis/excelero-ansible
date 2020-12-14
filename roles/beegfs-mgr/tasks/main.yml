@@ -23,7 +23,9 @@
 
 - name: Configure and start BeeGFS
   shell:
-    "/opt/beegfs/sbin/beegfs-setup-mgmtd -p /beegfs/mgmtd"
+  cmd: |
+    /opt/beegfs/sbin/beegfs-setup-mgmtd -p /beegfs/mgmtd
+  executable: /bin/bash
 
 - name: Enable beegfs-mgmtd
   systemd:
