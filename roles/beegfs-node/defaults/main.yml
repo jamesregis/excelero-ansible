@@ -1,2 +1,6 @@
 ---
-beegfs_dev_volume: ['t1m1p1', 't1d1p1', 't1m2p1', 't1d2p1']
+beegfs_dev_volumes:
+  - t1m1p1
+  - t1d1p1
+  - t1m2p1
+  - t1d2p1
