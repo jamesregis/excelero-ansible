@@ -27,9 +27,8 @@
     /opt/beegfs/sbin/beegfs-setup-mgmtd -p /beegfs/mgmtd
   executable: /bin/bash
 
-- name: Enable beegfs-mgmtd
+- name: Enable and start beegfs-mgmtd
   systemd:
     name: beegfs-mgmtd
+    state: started
     enabled: yes
-
-
