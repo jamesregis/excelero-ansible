@@ -1,5 +1,4 @@
 ---
-
 - name: Install BeeGFS management package
   package:
     name: beegfs-mgmtd
@@ -13,8 +12,8 @@
 - name: Add mount point to /etc/fstab
   lineinfile:
     path: /etc/fstab
-    regexp: '^/dev/nvmesh/mgmtd1'
-    line: '/dev/nvmesh/mgmtd1 /beegfs/mgmtd xfs rw,noatime,nodiratime,largeio,inode64,noauto 0 0'
+    regexp: "^/dev/nvmesh/mgmtd1"
+    line: "/dev/nvmesh/mgmtd1 /beegfs/mgmtd xfs rw,noatime,nodiratime,largeio,inode64,noauto 0 0"
 
 - name: Mount management volume
   ansible.posix.mount:
