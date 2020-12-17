@@ -1,0 +1,32 @@
+---
+
+- name: Disable firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+
+- name: Check SELinux state
+  command: getenforce
+  register: selinux_state
+  changed_when: false
+  failed_when: false
+  check_mode: no
+
+- name: Disable SELinux
+  selinux:
+    state: disabled
+  when: selinux_state.stdout != 'Disabled'
+  register: selinux_has_change_state
+
+- debug: var=selinux_has_change_state
+
+- name: Reboot host and wait for it to restart
+  reboot:
+    msg: "Reboot initiated by Ansible"
+    connect_timeout: 5
+    reboot_timeout: 600
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+    test_command: whoami
+  when: selinux_has_change_state. changed is false
