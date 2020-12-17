@@ -21,7 +21,10 @@
 
 - debug: var=selinux_has_change_state
 
-- name: Reboot host and wait for it to restart
+  debug: var=selinux_has_change_state
+  when: selinux_has_change_state.changed
+
+- name: Reboot host and wait for restart
   reboot:
     msg: "Reboot initiated by Ansible"
     connect_timeout: 5
@@ -29,4 +32,5 @@
     pre_reboot_delay: 0
     post_reboot_delay: 30
     test_command: whoami
-  when: selinux_has_change_state. changed is false
+  when: selinux_state.stdout != 'Disabled'
+  # when: selinux_has_change_state.changed
