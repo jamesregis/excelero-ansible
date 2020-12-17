@@ -1,9 +1,0 @@
----
-- name: Install MongoDB repository
-  yum_repository:
-    name: mongodb-org-4.2
-    description: MongoDB Repository
-    file: mongodb-org-4.2
-    baseurl: "https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.2/x86_64/"
-    gpgkey: "https://www.mongodb.org/static/pgp/server-4.2.asc"
-    gpgcheck: yes
