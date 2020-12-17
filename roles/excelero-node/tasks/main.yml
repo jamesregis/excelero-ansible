@@ -6,12 +6,18 @@
       - nvmesh-core
       - nvmesh-utils
 
+- set_fact:
+    management_server_with_port: "{{ management_server_with_port}} + [ '{{ item }}'+':4000' ]"
+  loop: "{{ groups.excelero_mgrs }}"
+
+- debug: var=management_server_with_port
+
 # TODO: a revoir : template jinja
 - name: Initialize MANAGEMENT_SERVERS in /etc/nvmesh/nvmesh.conf
   lineinfile:
     path: "/etc/nvmesh/nvmesh.conf"
     regexp: "^MANAGEMENT_SERVERS="
-    line: MANAGEMENT_SERVERS='{{ ",".join(groups.excelero_mgrs) }}'
+    line: MANAGEMENT_SERVERS='{{ ",".join(management_server_with_port) }}'
 
 # TODO: a revoir : template jinja
 - name: Initialize CONFIGURED_NICS in /etc/nvmesh/nvmesh.conf
@@ -26,7 +32,7 @@
     path: "/etc/nvmesh/nvmesh.conf"
     line: 'MLX5_RDDA_ENABLED="False"'
 
-- name: Kernel tuning recommandations
+- name: Kernel tuning recommendations
   template:
     src: etc/modprobe.d/nvmesh_options.conf.j2
     dest: /etc/modprobe.d/nvmesh_options.conf
