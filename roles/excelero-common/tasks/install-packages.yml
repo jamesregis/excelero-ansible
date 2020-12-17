@@ -24,7 +24,7 @@
   command:
     "grubby --set-default-index=0"
 
-- name: Reboot host (if required) and wait for it to restart
+- name: Reboot host (if required) and wait for restart
   reboot:
     msg: "Reboot initiated by Ansible"
     connect_timeout: 5
