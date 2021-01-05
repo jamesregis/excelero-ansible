@@ -17,12 +17,12 @@ file is /etc/ansible/hosts but this file can be placed anywhere and used with
 the -i flag of ansible-playbook.
 
 ```
-[excelero-mgrs]
+[excelero_mgrs]
 mgmt1
 mgmt2
 mgmt3
 
-[excelero-nodes]
+[excelero_nodes]
 node01
 node02
 node03
