@@ -6,7 +6,7 @@
   package:
     name: "*"
     state: latest
-    exclude: kernel*
+    exclude: kernel*,centos*
   register: update_package
 
 - debug: var=update_package
@@ -37,10 +37,11 @@
 - name: Install required packages
   package:
     name:
+      - rdma-core-devel
       - createrepo
       - gdb-headless
       - rpm-build
-      - python36-devel
+      - python2-devel
       - tcl
       - tk
       - tcsh
@@ -52,3 +53,7 @@
       - unzip
       - elfutils-libelf-devel
     state: installed
+
+- name: Set {{ default_python }} as default python (/usr/bin/python)
+  shell:
+    "alternatives --set python /usr/bin/{{ default_python }} "
