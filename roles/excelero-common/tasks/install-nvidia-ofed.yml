@@ -17,7 +17,6 @@
   args:
     executable: /bin/bash
 
-#TODO: use systemd
 - name: Reload driver
   systemd:
     name: openibd
