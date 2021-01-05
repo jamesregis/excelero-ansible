@@ -8,3 +8,4 @@ ofed_driver_path: "/tmp/{{ ofed_driver_name }}.tgz"
 tuned_active_builtin_profile: "latency-performance"
 
 excelero_repository_version: "8.2"
+default_python: "python2"
