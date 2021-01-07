@@ -60,7 +60,7 @@
   include: initialize-nvme-drive.yml
   when: has_nvme_drive.rc == 0
 
-- name: Test
+- name: Create default volumes
   include_tasks: create-default-volume.yml
   vars:
     volume_name: "{{ nvme_volume.name }}"
@@ -73,6 +73,8 @@
     loop_var: nvme_volume
   run_once: true
 
+- name: Create and mount partitions
+  import_tasks: create-and-mount-partition.yml
 
 # - name: test
 #   shell:
