@@ -6,26 +6,75 @@
 
 - name: Create /beegfs directory for management
   file:
-    path: "/beegfs/mgmtd"
+    path: "{{ item.mount_point}}"
     state: directory
+  loop: "{{ mgmt_volume_to_create }}"
 
-- name: Add mount point to /etc/fstab
-  lineinfile:
-    path: /etc/fstab
-    regexp: "^/dev/nvmesh/mgmtd1"
-    line: "/dev/nvmesh/mgmtd1 /beegfs/mgmtd xfs rw,noatime,nodiratime,largeio,inode64,noauto 0 0"
+- name: Create mgmt volume
+  include_role:
+    name: excelero-node
+    tasks_from: create-default-volume.yml
+  vars:
+    volume_name: "{{ mgmt_volume.name }}"
+    volume_size: "{{ mgmt_volume.size }}"
+    volume_raid_level: "{{ mgmt_volume.raid_level }}"
+    volume_stripe_width: "{{ mgmt_volume.stripe_width }}"
+    volume_mount_point: "{{ mgmt_volume.mount_point }}"
+  loop: "{{ mgmt_volume_to_create }}"
+  loop_control:
+    loop_var: mgmt_volume
 
-- name: Mount management volume
+- name: Attach mgmt volume to host
+  shell:
+    "/usr/bin/nvmesh_attach_volumes {{ mgmt_vol.name }}"
+  loop: "{{ mgmt_volume_to_create }}"
+  loop_control:
+    loop_var: "mgmt_vol"
+
+- name: Create a XFS primary partition
+  community.general.parted:
+    device: "/dev/nvmesh/{{ item.name }}"
+    number: 1
+    label: "gpt"
+    part_start: "256s"
+    part_end: "100%"
+    state: present
+  loop: "{{ mgmt_volume_to_create }}"
+
+- name: Format partition with XFS
+  community.general.filesystem:
+    fstype: xfs
+    dev: "/dev/nvmesh/{{ item.name }}p1"
+    opts: "-K -d su=4k,sw=8 -l version=2,su=4k -isize=512"
+  loop: "{{ mgmt_volume_to_create }}"
+  run_once: true
+
+- name: Mount default volumes
   ansible.posix.mount:
-    path: /beegfs/mgmtd
+    path: "{{ item.mount_point }}"
+    src: "/dev/nvmesh/{{ item.name }}p1"
     fstype: xfs
     state: present
+    opts: "rw,noatime,nodiratime,largeio,inode64,noauto"
+    state: mounted
+  loop: "{{ mgmt_volume_to_create }}"
 
+
+- name: Check if BeeGFS is already initialized
+  find:
+    path: "{{ item.mount_point }}"
+  loop: "{{ mgmt_volume_to_create }}"
+  register: beegfs_already_initialized
+
+- debug: var=beegfs_already_initialized
+
+# hun hum ...
 - name: Configure and start BeeGFS
   shell:
-  cmd: |
-    /opt/beegfs/sbin/beegfs-setup-mgmtd -p /beegfs/mgmtd
-  executable: /bin/bash
+    "/opt/beegfs/sbin/beegfs-setup-mgmtd -p {{ item.mount_point }}"
+  # executable: /bin/bash
+  loop: "{{ mgmt_volume_to_create }}"
+  when: beegfs_already_initialized.results[0].matched|int == 0
 
 - name: Enable and start beegfs-mgmtd
   systemd:
