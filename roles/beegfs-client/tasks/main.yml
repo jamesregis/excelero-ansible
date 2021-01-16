@@ -1,0 +1,56 @@
+---
+
+
+# - name: Install specific kernel (nmesh build)
+#   package:
+#     name:
+#       - https://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/kernel-devel-{{ nvmesh_required_kernel}}.rpm
+#     state: installed
+
+# - name: Install OFED driver
+#   include: install-nvidia-ofed.yml
+
+- name: Change rdma_reject function definition (quick-fix)
+  ansible.builtin.lineinfile:
+    path: "/opt/beegfs/src/client/client_module_7/source/common/net/sock/ibv/IBVSocket.c"
+    regexp: "^         rdma_reject(cm_id, NULL, 0);"
+    line: "         rdma_reject(cm_id, NULL, 0, IB_CM_REJ_UNSUPPORTED);"
+
+- name: Create interfaces file
+  template:
+    src: etc/beegfs/interfaces.j2
+    dest: /etc/beegfs/interfaces
+
+- name: Create netfilter files
+  template:
+    src: etc/beegfs/netfilter.j2
+    dest: /etc/beegfs/netfilter
+
+- name: Create BeeGFS client file
+  template:
+    src: etc/beegfs/beegfs-client.conf.j2
+    dest: /etc/beegfs/beegfs-client.conf
+
+- name: BeeGFS Client setup script
+  shell:
+    "/opt/beegfs/sbin/beegfs-setup-client -m {{ groups['beegfs_mgr'][0] }}"
+
+- name: Create BeeGFS mount directory
+  file:
+    path: "{{ beegfs_mnt_directory }}"
+    state: directory
+
+- name: Enable OFED library
+  template:
+    src: etc/beegfs/beegfs-client-autobuild.conf.j2
+    dest: /etc/beegfs/beegfs-client-autobuild.conf
+
+- name: Start and enable beegfs-helperd & beegfs-client
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - beegfs-helperd
+    - beegfs-client
+

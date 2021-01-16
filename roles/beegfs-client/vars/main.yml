@@ -1,0 +1,31 @@
+client_interfaces:
+  - ib0
+  - ib3
+
+meta_storage_subnets:
+  - "192.168.0.1/24"
+  - "193.169.0.1/20"
+
+beegfs_mnt_directory: "/beegfs/mnt"
+
+nvmesh_required_kernel: "4.18.0-193.19.1.el8_2.x86_64"
+
+buildArgs: "-j8 BEEGFS_OPENTK_IBVERBS=1 OFED_INCLUDE_PATH=/usr/src/ofa_kernel/default/include"
+
+connAuthFile: ""
+connClientPortUDP: "8004"
+connHelperdPortTCP: "8006"
+connMgmtdPortTCP: "8008"
+connMgmtdPortUDP: "8008"
+connPortShift: "0"
+
+connCommRetrySecs: "600"
+connFallbackExpirationSecs: "900"
+connInterfacesFile: "/etc/beegfs/interfaces"
+connMaxInternodeNum: "12"
+connMaxConcurrentAttempts: "0"
+connNetFilterFile: "/etc/beegfs/netfilter"
+
+connUseRDMA: "true"
+connRDMABufNum: "44"
+connRDMABufSize: "32768"
