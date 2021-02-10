@@ -13,6 +13,7 @@
   package:
     name:
       - mongodb-org
+      - python3-pymongo
     state: installed
 
 - name: Modify /etc/mongod.conf

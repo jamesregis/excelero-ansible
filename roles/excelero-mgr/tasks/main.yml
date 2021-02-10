@@ -1,4 +1,5 @@
 ---
+- import_tasks: install-mongodb.yml
 
 - name: "Install NodeJS {{ node_version }} and NVMesh management"
   package:
@@ -7,12 +8,10 @@
       - nvmesh-management
       - python3-pymongo
 
-- import_tasks: install-mongodb.yml
-
 - name: Modify /etc/nvmesh/management.js.conf
   template:
     src: 'etc/nvmesh/management.js.conf.j2'
-    dest: '/etc/nvmesh/management.js.conf'
+    dest: '/etc/opt/NVMesh/management.js.conf'  #fixed path
     mode: 0644
     owner: root
     group: root
