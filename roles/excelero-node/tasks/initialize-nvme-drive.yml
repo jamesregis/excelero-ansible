@@ -1,0 +1,29 @@
+---
+
+
+# TODO: a vérifier .... add_host ne s'execute que sur 1 seul nœud
+
+- name: "Add host {{ hostvars[inventory_hostname].inventory_hostname }} to live inventory ({{ host_with_nvme_drives }})"
+  add_host:
+    name: "{{ hostvars[inventory_hostname].inventory_hostname }}"
+    ansible_host: "{{ hostvars[inventory_hostname].inventory_hostname}}"
+    groups: "{{ host_with_nvme_drives }}"
+
+- debug: var=groups
+
+## Generate an array with the drive serial number and the status
+- name: Get drive status
+  shell:
+    "/usr/bin/nvmesh drive show --output-format rows | egrep -i '(Serial Number|Status)' | cut -d ':' -f 2 | sed 's/^[ \t]*//' | paste - - -d ' '" # | sed 's/\t/,/'"
+  register: nvme_drive_list
+  run_once: true
+  when: inventory_hostname == groups['excelero_mgrs'][0]
+
+- debug: var=nvme_drive_list
+
+- name: Initialize NVMe drives (if required)
+  shell:
+    "/usr/bin/nvmesh drive format -y --name {{ item.split(' ')[0] }}"
+  loop: "{{ nvme_drive_list.stdout_lines|default([]) }}"
+  run_once: true
+  when: inventory_hostname == groups['excelero_mgrs'][0] and item.split(" ")[1] == "Not_Initialized"

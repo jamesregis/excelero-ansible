@@ -5,24 +5,27 @@ max_local_nvmeqs: 32
 
 configured_nics: "ib0"
 
+meta_size: "100G"
+storage_size: "500G"
+
 volumes_to_create:
   - name: meta-1
-    size: "100G"
+    size: "{{ meta_size }}"
     raid_level: "0"
     stripe_width: "2"
     mount_point: "/beegfs/meta-1"
   - name: meta-2
-    size: "100G"
+    size: "{{ meta_size }}"
     raid_level: "0"
     stripe_width: "2"
     mount_point: "/beegfs/meta-2"
   - name: storage-1
-    size: "500G"
+    size: "{{ storage_size }}"
     raid_level: "0"
     stripe_width: "2"
     mount_point: "/beegfs/storage-1"
   - name: storage-2
-    size: "500G"
+    size: "{{ storage_size }}"
     raid_level: "0"
     stripe_width: "2"
     mount_point: "/beegfs/storage-2"

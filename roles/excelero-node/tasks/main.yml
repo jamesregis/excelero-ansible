@@ -1,53 +1,53 @@
 ---
 
-# - name: Install NVMesh core and utils
-#   package:
-#     name:
-#       - nvmesh-core
-#       - nvmesh-utils
-#       - nvme-cli
-#       # - nvmesh-nvmft
+- name: Install NVMesh core and utils
+  package:
+    name:
+      - nvmesh-core
+      - nvmesh-utils
+      - nvme-cli
+#       # - nvmesh-nvmft   # we do not need the NVMeoF transport
 
-# - set_fact:
-#     management_server_with_port: "{{ management_server_with_port}} + [ '{{ item }}'+':4001' ]"
-#   loop: "{{ groups.excelero_mgrs }}"
+- set_fact:
+    management_server_with_port: "{{ management_server_with_port}} + [ '{{ item }}'+':4001' ]"
+  loop: "{{ groups.excelero_mgrs }}"
 
-# - debug: var=management_server_with_port
+- debug: var=management_server_with_port
 
-# - name: Initialize MANAGEMENT_SERVERS in /etc/nvmesh/nvmesh.conf
-#   lineinfile:
-#     path: "/etc/nvmesh/nvmesh.conf"
-#     regexp: "^MANAGEMENT_SERVERS="
-#     line: MANAGEMENT_SERVERS='{{ ",".join(management_server_with_port) }}'
-
-# # TODO: a revoir : template jinja
-# - name: Initialize CONFIGURED_NICS in /etc/nvmesh/nvmesh.conf
-#   lineinfile:
-#     path: "/etc/nvmesh/nvmesh.conf"
-#     regexp: '^CONFIGURED_NICS='
-#     line: CONFIGURED_NICS="{{ configured_nics }}"
+- name: Initialize MANAGEMENT_SERVERS in /etc/nvmesh/nvmesh.conf
+  lineinfile:
+    path: "/etc/opt/NVMesh/nvmesh.conf"   #preferred path
+    regexp: "^MANAGEMENT_SERVERS="
+    line: MANAGEMENT_SERVERS='{{ ",".join(management_server_with_port) }}'
 
 # # TODO: a revoir : template jinja
-# - name: Disable RDDA transport
+- name: Initialize CONFIGURED_NICS in /etc/nvmesh/nvmesh.conf
+  lineinfile:
+    path: "/etc/opt/NVMesh/nvmesh.conf"    #preferred path
+    regexp: '^CONFIGURED_NICS='
+    line: CONFIGURED_NICS="{{ configured_nics }}"
+
+# # TODO: a revoir : template jinja
+# - name: Disable RDDA transport                # Why disabled?
 #   lineinfile:
 #     path: "/etc/nvmesh/nvmesh.conf"
 #     line: 'MLX5_RDDA_ENABLED="False"'
 
-# - name: Kernel tuning recommendations
-#   template:
-#     src: etc/modprobe.d/nvmesh_options.conf.j2
-#     dest: /etc/modprobe.d/nvmesh_options.conf
-#     owner: root
-#     group: root
-#     mode: '0644'
+- name: Kernel tuning recommendations
+  template:
+    src: etc/modprobe.d/nvmesh_options.conf.j2
+    dest: /etc/modprobe.d/nvmesh_options.conf
+    owner: root
+    group: root
+    mode: '0644'
 
 - name: Check if there are connected NVMe drives
   shell:
-    "lspci  | grep -i nvm"
+    "lspci  | grep -i 'Non-Volatile memory controller'"
   register: has_nvme_drive
   ignore_errors: true
 
-# - debug: var=has_nvme_drive
+- debug: var=has_nvme_drive
 
 # ## for debug .. can be removed
 # - name: Disable target only on node that hasn't NVMe drives
@@ -56,9 +56,35 @@
 #     state: stopped
 #     enabled: no
 
+# - name: Enable target only on node that has NVMe drives   # Moved up to before attempting to init drives
+#   systemd:
+#     name: nvmeshtarget
+#     state: restarted
+#     enabled: yes
+#   when: has_nvme_drive.rc == 0
+
+# - name: Enable and start NVMesh client   # Moved up, to resolve dependency on attaching volumes
+#   systemd:
+#     name: nvmeshclient
+#     state: restarted
+#     enabled: yes
+
+- name: Wait for targets and TOMA
+  shell:
+    "/usr/bin/nvmesh target show | egrep -i '(Health|TOMA Status)' | cut -d ':' -f 2 | sed 's/^[ \t]*//' | paste - - -d ' ' | grep -v 'Healthy up' -c"
+  retries: 10
+  delay: 5
+  register: nve_target_status
+  until: nve_target_status.stdout == "0"  
+  when: inventory_hostname == groups['excelero_mgrs'][0]
+  ignore_errors: true
+
+- debug: var=nve_target_status
+  when: inventory_hostname == groups['excelero_mgrs'][0]
+
 - name: Initialize NVMe drives (if required)
   include: initialize-nvme-drive.yml
-  when: has_nvme_drive.rc == 0
+  when: inventory_hostname == groups['excelero_mgrs'][0]
 
 - name: Create default volumes
   include_tasks: create-default-volume.yml
@@ -71,38 +97,20 @@
   loop: "{{ volumes_to_create }}"
   loop_control:
     loop_var: nvme_volume
-  run_once: true
 
 - name: Create and mount partitions
   import_tasks: create-and-mount-partition.yml
 
-# - name: test
-#   shell:
-#     "/usr/bin/nvmesh volume show --name {{ item.name }}"
-#   loop: "{{ volumes_to_create }}"
-#   register: user_volume
-#   run_once: true
+- name: test
+  shell:
+    "/usr/bin/nvmesh volume show --name {{ item.name }}"
+  loop: "{{ volumes_to_create }}"
+  register: user_volume
+  run_once: true
 
-# - debug: var=user_volume
-#   run_once: true
+- debug: var=user_volume
+  run_once: true
 
-# - name: Create default directory
-#   include: create-default-volumes.yml
-
-
-# - name: Enable target only on node that has NVMe drives
-#   systemd:
-#     name: nvmeshtarget
-#     state: restarted
-#     enabled: yes
-#   when: has_nvme_drive.rc == 0
-
-# - name: Enable and start NVMesh client
-#   systemd:
-#     name: nvmeshclient
-#     state: restarted
-#     enabled: yes
-
-# - debug:
-#     msg: "Verify the nodes and check in to management to see 10 clients and 10 targets with 100 NVMe drives on the Dashboard page of WebUI."
-#   run_once: true
+- debug:
+    msg: "Verify the nodes and check in to management to see 10 clients and 10 targets with 100 NVMe drives on the Dashboard page of WebUI."
+  run_once: true

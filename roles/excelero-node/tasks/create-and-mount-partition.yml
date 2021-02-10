@@ -9,7 +9,8 @@
     part_end: "100%"
     state: present
   loop: "{{ volumes_to_create }}"
-
+  run_once: true
+  
 - name: Format partition with XFS
   community.general.filesystem:
     fstype: xfs
@@ -17,6 +18,11 @@
     opts: "-K -d su=4k,sw=8 -l version=2,su=4k -isize=512"
   loop: "{{ volumes_to_create }}"
   run_once: true
+  
+- name: Attach volumes to all hosts
+  shell:
+    "/usr/bin/nvmesh_attach_volumes {{ item.name }}"  
+  loop: "{{ volumes_to_create }}"
 
 # # TODO: cpu pining for process
 # # https://community.mellanox.com/s/article/howto-configure-and-test-beegfs-with-rdma
@@ -26,11 +32,6 @@
   file:
     path: "{{ item.mount_point }}"
     state: directory
-  loop: "{{ volumes_to_create }}"
-
-- name: Attach volumes to all hosts
-  shell:
-    "/usr/bin/nvmesh_attach_volumes {{ item.name }}"
   loop: "{{ volumes_to_create }}"
 
 - name: Mount default volumes

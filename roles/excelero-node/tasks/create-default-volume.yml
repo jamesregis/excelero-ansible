@@ -1,0 +1,23 @@
+---
+
+- name: "Check if a volume with the same name ({{ volume_name }}) already exists"
+  shell:
+    "/usr/bin/nvmesh volume show --name {{ volume_name }}"
+  register: check_volume
+  run_once: true
+
+- debug: var=check_volume.stdout
+
+- debug: var=check_volume.stdout|length
+  when: check_volume.stdout == "[]" or  check_volume.stdout == ""
+
+- name: Create NVMesh volume ({{ volume_name }})
+  shell:
+    "/usr/bin/nvmesh volume create -n {{ volume_name }} -rl {{ volume_raid_level }} --stripe-width {{ volume_stripe_width }} -c {{ volume_size }}"
+  when: check_volume.stdout == "[]" or  check_volume.stdout == ""
+  run_once: true
+
+- name: Attach volumes to one host to enable partition and format
+  shell:
+    "/usr/bin/nvmesh_attach_volumes {{ volume_name }}"
+  run_once: true
