@@ -1,0 +1,14 @@
+---
+
+- name: Configure systctl for BeeGFS in {{ systctl_file }}
+  ansible.posix.sysctl:
+    name: "{{ item[0] }}"
+    value: "{{ item[1] }}"
+    state: present
+    sysctl_file: "{{ systctl_file }}"
+    reload: no
+  loop:
+    - ['vm.dirty_background_ratio', '5']
+    - ['vm.dirty_ratio', '10']
+    - ['vm.vfs_cache_pressure', '50']
+    - ['vm.min_free_kbytes', '262144']

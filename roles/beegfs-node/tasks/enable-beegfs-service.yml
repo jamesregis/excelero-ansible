@@ -1,0 +1,46 @@
+---
+
+- name: Disable generic beegfs services
+  systemd:
+    name: "{{ item }}"
+    enabled: no
+  loop:
+    - beegfs-meta
+    - beegfs-storage
+
+- name: Enable specific beegfs services
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - beegfs-meta@inst1
+    - beegfs-meta@inst2
+    - beegfs-storage@inst1
+    - beegfs-storage@inst2
+
+- name: Create systemd override folder
+  file:
+    path: "/etc/systemd/system/{{ item }}.service.d"
+    state: directory
+  loop:
+    - beegfs-meta@inst1
+    - beegfs-meta@inst2
+    - beegfs-storage@inst1
+    - beegfs-storage@inst2
+
+- name: Create systemd override file
+  template:
+    src: etc/systemd/system/beegfs/override.conf.j2
+    dest: /etc/systemd/system/{{ item[0] }}.service.d/override.conf
+  vars:
+    folder: "{{ item[1] }}"
+  loop:
+    - ['beegfs-meta@inst1', 'meta-1']
+    - ['beegfs-meta@inst2', 'meta-2']
+    - ['beegfs-storage@inst1', 'storage-1']
+    - ['beegfs-storage@inst2', 'storage-2']
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes

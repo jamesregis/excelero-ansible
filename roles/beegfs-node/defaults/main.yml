@@ -4,3 +4,11 @@ beegfs_dev_volumes:
   - t1d1p1
   - t1m2p1
   - t1d2p1
+
+nic_1:
+  - "enp33s0f0"
+
+nic_2:
+  - "enp33s0f0"
+
+systctl_file: "/etc/sysctl.d/90-beegfs.conf"

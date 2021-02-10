@@ -1,0 +1,54 @@
+---
+
+- name: Print index
+  debug:
+    msg: "Index is {{ groups['beegfs_nodes'].index(inventory_hostname)|int + 1 }}"
+
+
+- debug: var=groups['beegfs_mgr'][0]
+
+- set_fact:
+    mgmt_node: "{{ groups['beegfs_nodes'][0] }}"
+    index_node: "{{ groups['beegfs_nodes'].index(inventory_hostname)|int + 1 }}"
+
+- name: Check if directory /beegfs/meta-1 is empty (not initialized)
+  find:
+    path: "/beegfs/meta-1"
+  register: meta_1_already_initialized
+
+- debug: var=meta_1_already_initialized
+
+- name: Check if directory /beegfs/meta-2 is empty (not initialized)
+  find:
+    path: "/beegfs/meta-2"
+  register: meta_2_already_initialized
+
+- name: Check if directory /beegfs/storage-1 is empty (not initialized)
+  find:
+    path: "/beegfs/storage-1"
+  register: storage_1_already_initialized
+
+- name: Check if directory /beegfs/storage-2 is empty (not initialized)
+  find:
+    path: "/beegfs/storage-2"
+  register: storage_2_already_initialized
+
+- name: Register the service instances on each node with unique ID (meta-1)
+  shell:
+    "/opt/beegfs/sbin/beegfs-setup-meta -c /etc/beegfs/inst1.d/beegfs-meta.conf -p /beegfs/meta-1 -s {{ index_node}}1 -S meta1-inst1 -m  {{ mgmt_node}}"
+  when: meta_1_already_initialized.files == []
+
+- name: Register the service instances on each node with unique ID (meta-2)
+  shell:
+    "/opt/beegfs/sbin/beegfs-setup-meta -c /etc/beegfs/inst2.d/beegfs-meta.conf -p /beegfs/meta-2 -s {{ index_node }}2 -S meta1-inst2 -m {{ mgmt_node }}"
+  when: meta_2_already_initialized.files == []
+
+- name: Register the service instances on each node with unique ID (storage-1)
+  shell:
+    "/opt/beegfs/sbin/beegfs-setup-storage -c /etc/beegfs/inst1.d/beegfs-storage.conf -p /beegfs/storage-1 -s {{ index_node }}1 -i {{ index_node }}11 -S stor1-inst1 -m {{ mgmt_node }}"
+  when: storage_1_already_initialized.files == []
+
+- name: Register the service instances on each node with unique ID (storage-2)
+  shell:
+    "/opt/beegfs/sbin/beegfs-setup-storage -c /etc/beegfs/inst2.d/beegfs-storage.conf -p /beegfs/storage-2 -s {{ index_node }}2 -i {{ index_node }}21 -S stor1-inst2 -m {{ mgmt_node }}"
+  when: storage_2_already_initialized.files == []

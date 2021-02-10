@@ -1,0 +1,79 @@
+---
+
+- name: "Get port connected to the network"
+  shell:
+    "/usr/sbin/ibdev2netdev | grep -v Down | cut -d' ' -f 5"
+  register: connected_interface
+
+- name: "Get NUMA number"
+  shell:
+    "/usr/bin/cat /sys/class/net/{{ connected_interface.stdout }}/device/numa_node"
+  register: first_hca_numa_node
+
+- debug: var=first_hca_numa_node.stdout
+
+### how to find the second numa node ??
+- set_fact:
+    second_hca_numa_node: "{{ first_hca_numa_node }}"
+###
+
+- name: Copy /etc/beegfs/inst1.d/beegfs-meta.conf
+  template:
+    src: etc/beegfs/beegfs-meta.conf.j2
+    dest: /etc/beegfs/inst1.d/beegfs-meta.conf
+  vars:
+    connInterfacesFile: "/etc/beegfs/interfaces-1"
+    connMaxInternodeNum: "64"
+    connMetaPortTCP: "8015"
+    connMetaPortUDP: "8015"
+    connRDMATypeOfService: "106"
+    logStdFile: "/var/log/beegfs-meta-1.log"
+    tuneTargetChooser: "randomrobin"
+    storeMetaDirectory: "/beegfs/meta-1"
+    tuneBindToNumaZone: "{{ first_hca_numa_node.stdout }}"
+
+- name: Copy /etc/beegfs/inst2.d/beegfs-meta.conf
+  template:
+    src: etc/beegfs/beegfs-meta.conf.j2
+    dest: /etc/beegfs/inst2.d/beegfs-meta.conf
+  vars:
+    connInterfacesFile: "/etc/beegfs/interfaces-2"
+    connMaxInternodeNum: "64"
+    connMetaPortTCP: "8025"
+    connMetaPortUDP: "8025"
+    connRDMATypeOfService: "106"
+    logStdFile: "/var/log/beegfs-meta-2.log"
+    tuneTargetChooser: "randomrobin"
+    storeMetaDirectory: "/beegfs/meta-2"
+    tuneBindToNumaZone: "{{ second_hca_numa_node.stdout }}"
+
+- name: Copy /etc/beegfs/inst1.d/beegfs-storage.conf
+  template:
+    src: etc/beegfs/beegfs-storage.conf.j2
+    dest: /etc/beegfs/inst1.d/beegfs-storage.conf
+  vars:
+    connInterfacesFile: "/etc/beegfs/interfaces-1"
+    connStoragePortTCP: "8013"
+    connStoragePortUDP: "8013"
+    connRDMATypeOfService: "106"
+    logStdFile: "/var/log/beegfs-storage-1.log"
+    tuneFileReadSize: "1m"
+    tuneFileWriteSize: "1m"
+    storeStorageDirectory: '/beegfs/storage-1'
+    tuneBindToNumaZone: "{{ first_hca_numa_node.stdout }}" # Use the first HCA NUMA node
+
+
+- name: Copy /etc/beegfs/inst2.d/beegfs-storage.conf
+  template:
+    src: etc/beegfs/beegfs-storage.conf.j2
+    dest: /etc/beegfs/inst2.d/beegfs-storage.conf
+  vars:
+    connInterfacesFile: "/etc/beegfs/interfaces-2"
+    connStoragePortTCP: "8023"
+    connStoragePortUDP: "8023"
+    connRDMATypeOfService: "106"
+    logStdFile: "/var/log/beegfs-storage-2.log"
+    tuneFileReadSize: "1m"
+    tuneFileWriteSize: "1m"
+    storeStorageDirectory: '/beegfs/storage-2'
+    tuneBindToNumaZone: "{{ second_hca_numa_node.stdout }}" # Use the second HCA NUMA node
