@@ -14,12 +14,13 @@
 - name: Install specific kernel (nmesh build)
   package:
     name:
-      - https://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/kernel-core-4.18.0-193.19.1.el8_2.x86_64.rpm
-      - https://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/kernel-modules-4.18.0-193.19.1.el8_2.x86_64.rpm
-      - https://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/kernel-4.18.0-193.19.1.el8_2.x86_64.rpm
-      - https://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/kernel-headers-4.18.0-193.19.1.el8_2.x86_64.rpm
+      - https://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/kernel-core-{{ nvmesh_required_kernel}}.rpm
+      - https://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/kernel-modules-{{ nvmesh_required_kernel }}.rpm
+      - https://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/kernel-{{ nvmesh_required_kernel }}.rpm
+      - https://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/kernel-headers-{{ nvmesh_required_kernel }}.rpm
     state: installed
 
+## todo
 - name: Set default kernel
   command:
     "grubby --set-default-index=0"
