@@ -2,9 +2,9 @@ client_interfaces:
   - ib0
   - ib3
 
+# subnets to communicate with storage and meta
 meta_storage_subnets:
-  - "192.168.0.1/24"
-  - "193.169.0.1/20"
+  - "172.27.21.0/24"
 
 beegfs_mnt_directory: "/beegfs/mnt"
 
