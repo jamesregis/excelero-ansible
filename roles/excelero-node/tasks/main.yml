@@ -1,5 +1,15 @@
 ---
 
+- name: Create API credentials local directory
+  file:
+    path: "{{ ansible_env.HOME }}/.nvmesh_cli_files"
+    state: directory
+
+- name: Create API credentials file
+  template:
+    src: nvmesh_api_secrets.j2
+    dest: "{{ ansible_env.HOME }}/.nvmesh_cli_files/nvmesh_api_secrets"
+
 - name: Install NVMesh core and utils
   package:
     name:
