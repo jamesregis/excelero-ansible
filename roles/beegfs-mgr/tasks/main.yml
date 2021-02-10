@@ -72,7 +72,6 @@
 - name: Configure and start BeeGFS
   shell:
     "/opt/beegfs/sbin/beegfs-setup-mgmtd -p {{ item.mount_point }}"
-  # executable: /bin/bash
   loop: "{{ mgmt_volume_to_create }}"
   when: beegfs_already_initialized.results[0].matched|int == 0
 
