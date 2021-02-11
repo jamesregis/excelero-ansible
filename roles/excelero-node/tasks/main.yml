@@ -10,6 +10,9 @@
     src: nvmesh_api_secrets.j2
     dest: "{{ ansible_env.HOME }}/.nvmesh_cli_files/nvmesh_api_secrets"
 
+- pause:
+    prompt: "Before continue, make sur the API credentials are the good ones !"
+
 - name: Install NVMesh core and utils
   package:
     name:
