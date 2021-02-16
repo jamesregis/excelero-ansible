@@ -3,7 +3,7 @@ spread_resub_work: 2
 min_local_nvmeqs: 32
 max_local_nvmeqs: 32
 
-configured_nics: "ib0"
+configured_nics: "ib0;ib2"
 
 meta_size: "100G"
 storage_size: "500G"
@@ -29,3 +29,4 @@ volumes_to_create:
     raid_level: "0"
     stripe_width: "2"
     mount_point: "/beegfs/storage-2"
+
