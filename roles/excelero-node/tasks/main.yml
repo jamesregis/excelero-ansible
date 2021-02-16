@@ -87,18 +87,18 @@
 #     state: stopped
 #     enabled: no
 
-# - name: Enable target only on node that has NVMe drives   # Moved up to before attempting to init drives
-#   systemd:
-#     name: nvmeshtarget
-#     state: restarted
-#     enabled: yes
-#   when: has_nvme_drive.rc == 0
+- name: Enable target only on node that has NVMe drives   # Moved up to before attempting to init drives
+  systemd:
+    name: nvmeshtarget
+    state: restarted
+    enabled: yes
+  when: has_nvme_drive.rc == 0
 
-# - name: Enable and start NVMesh client   # Moved up, to resolve dependency on attaching volumes
-#   systemd:
-#     name: nvmeshclient
-#     state: restarted
-#     enabled: yes
+- name: Enable and start NVMesh client   # Moved up, to resolve dependency on attaching volumes
+  systemd:
+    name: nvmeshclient
+    state: restarted
+    enabled: yes
 
 - name: Wait for targets and TOMA
   shell:
