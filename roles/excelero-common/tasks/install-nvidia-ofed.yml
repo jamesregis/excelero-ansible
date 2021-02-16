@@ -6,7 +6,8 @@
   register: ofed_exists 
 
 - name: Test ofed version
-  ansible.builtin.shell: /usr/bin/ofed_info -n
+  command:
+    /usr/bin/ofed_info -n
   register: installed_ofed_version
   when: ofed_exists.stat.exists
 
