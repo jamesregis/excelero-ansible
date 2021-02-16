@@ -1,4 +1,24 @@
 ---
+- name: Optimize MLX5 configuration
+  shell:
+    cmd: |
+      for mlx in $(ibdev2netdev | grep Up | awk '{ print $1 }'); do
+        mlxconfig -d $mlx -b /etc/opt/NVMesh/Excelero_mlxconfig.db --yes set ONE_QP_PER_RECOVERY=1
+      done
+      touch {{ ansible_env.HOME }}/.mlx5_0-configured
+    creates: "{{ ansible_env.HOME }}/.mlx5_0-configured"
+    executable: /bin/bash
+  register: mlx5_config
+
+- name: Reboot host (if required) and wait for restart
+  reboot:
+    msg: "Reboot initiated by Ansible"
+    connect_timeout: 5
+    reboot_timeout: 600
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+    test_command: whoami
+  when: mlx5_config.changed
 
 - name: Create API credentials local directory
   file:
