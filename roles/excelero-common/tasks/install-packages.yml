@@ -23,7 +23,7 @@
 ## todo
 - name: Set default kernel
   command:
-    "grubby --set-default-index=0"
+    "grubby --set-default=/boot/vmlinuz-{{ nvmesh_required_kernel }}"
 
 - name: Reboot host (if required) and wait for restart
   reboot:
