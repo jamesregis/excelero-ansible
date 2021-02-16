@@ -20,8 +20,6 @@
   register: selinux_has_change_state
 
 - debug: var=selinux_has_change_state
-
-  debug: var=selinux_has_change_state
   when: selinux_has_change_state.changed
 
 - name: Reboot host and wait for restart
