@@ -1,0 +1,8 @@
+#jinja2: lstrip_blocks: "True (or False)", trim_blocks: "True (or False)"
+{% for device in ansible_interfaces %}
+  {% if 'macaddress' in ansible_facts[device] %}
+    {% if not (device | regex_search('^ib[0-9]$')) %}
+SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="{{ ansible_facts[device]['macaddress'] }}", NAME="{{ device }}"
+    {% endif %}
+  {% endif %}
+{% endfor %}
