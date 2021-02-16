@@ -33,8 +33,6 @@
   when: not ofed_exists.stat.exists or installed_ofed_version.stdout != ofed_version
 
 - name: Reload driver
-  systemd:
-    name: openibd
-    state: started
-    enabled: yes
+  command:
+    /etc/init.d/openibd force-restart
   when: not ofed_exists.stat.exists or installed_ofed_version.stdout != ofed_version
