@@ -102,7 +102,9 @@
 
 - name: Wait for targets and TOMA
   shell:
-    "/usr/bin/nvmesh target show | egrep -i '(Health|TOMA Status)' | cut -d ':' -f 2 | sed 's/^[ \t]*//' | paste - - -d ' ' | grep -v 'Healthy up' -c"
+    cmd: |
+      "nvmesh target show | egrep -i '(Health|TOMA Status)' | cut -d ':' -f 2 | sed 's/^[ \t]*//' | paste - - -d ' ' | grep -v 'Healthy up' -c"
+    executable: /bin/bash
   retries: 10
   delay: 5
   register: nve_target_status
