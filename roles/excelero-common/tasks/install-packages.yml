@@ -53,6 +53,9 @@
       - make
       - unzip
       - elfutils-libelf-devel
+      - perl-Term-ANSIColor
+      - perl-Getopt-Long
+      - python36
     state: installed
 
 - name: Set {{ default_python }} as default python (/usr/bin/python)
