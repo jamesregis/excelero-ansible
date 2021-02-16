@@ -1,0 +1,11 @@
+---
+- name: restart-client
+  systemd:
+    name: nvmeshclient
+    state: restarted
+
+- name: restart-target
+  systemd:
+    name: nvmeshtarget
+    state: restarted
+
