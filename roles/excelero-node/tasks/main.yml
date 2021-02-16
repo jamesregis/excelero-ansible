@@ -80,8 +80,6 @@
   register: has_nvme_drive
   ignore_errors: true
 
-- debug: var=has_nvme_drive
-
 # ## for debug .. can be removed
 # - name: Disable target only on node that hasn't NVMe drives
 #   systemd:
