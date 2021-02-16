@@ -1,12 +1,11 @@
 ---
 # Defines deployment design and assigns role to server groups
 #- hosts: excelero_mgrs
-#  gather_facts: true
-#  become: True
-#  any_errors_fatal: true
+#  gather_facts: yes
+#  become: yes
 #  pre_tasks:
 #    - name: set excelero manager install 'In Progress'
-#      run_once: true
+#      run_once: yes
 #      set_stats:
 #        data:
 #          installer_phase_excelero_mgr:
@@ -18,15 +17,10 @@
 #        name: excelero-common
 #    - import_role:
 #        name: excelero-mgr
-##    - import_role:
-##        name: beegfs-common
-##    - import_role:
-##        name: beegfs-mgr
-#
 #
 #  post_tasks:
 #    - name: set excelero manager install 'Complete'
-#      run_once: true
+#      run_once: yes
 #      set_stats:
 #        data:
 #          installer_phase_excelero_mgr:
