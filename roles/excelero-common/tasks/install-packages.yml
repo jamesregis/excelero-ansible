@@ -6,10 +6,9 @@
   package:
     name: "*"
     state: latest
-    exclude: kernel*,centos*
-  register: update_package
+#  register: update_package
 
-- debug: var=update_package
+#- debug: var=update_package
 
 - name: Install specific kernel (nmesh build)
   package:
