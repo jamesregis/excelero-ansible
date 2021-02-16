@@ -56,6 +56,7 @@
       - perl-Term-ANSIColor
       - perl-Getopt-Long
       - python36
+      - jq
     state: installed
 
 - name: Set {{ default_python }} as default python (/usr/bin/python)
