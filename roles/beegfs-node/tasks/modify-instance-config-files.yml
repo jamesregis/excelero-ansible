@@ -6,17 +6,14 @@
     executable: /bin/bash
   register: connected_interface
 
-- name: "Get NUMA number"
+- name: Get NUMA zone per interface
   shell:
-    "/usr/bin/cat /sys/class/net/{{ connected_interface.stdout }}/device/numa_node"
-  register: first_hca_numa_node
-
-- debug: var=first_hca_numa_node.stdout
-
-### how to find the second numa node ??
-- set_fact:
-    second_hca_numa_node: "{{ first_hca_numa_node }}"
-###
+    cmd: |
+      cat /sys/class/net/{{ item.0 }}/device/numa_node
+  register: numa_nic
+  loop:
+    - "{{ nic_1 }}"
+    - "{{ nic_2 }}"
 
 - name: Copy /etc/beegfs/inst1.d/beegfs-meta.conf
   template:
@@ -31,7 +28,7 @@
     logStdFile: "/var/log/beegfs-meta-1.log"
     tuneTargetChooser: "randomrobin"
     storeMetaDirectory: "/beegfs/meta-1"
-    tuneBindToNumaZone: "{{ first_hca_numa_node.stdout }}"
+    tuneBindToNumaZone: "{{ numa_nic.results.0.stdout }}"
 
 - name: Copy /etc/beegfs/inst2.d/beegfs-meta.conf
   template:
@@ -46,7 +43,7 @@
     logStdFile: "/var/log/beegfs-meta-2.log"
     tuneTargetChooser: "randomrobin"
     storeMetaDirectory: "/beegfs/meta-2"
-    tuneBindToNumaZone: "{{ second_hca_numa_node.stdout }}"
+    tuneBindToNumaZone: "{{ numa_nic.results.1.stdout }}"
 
 - name: Copy /etc/beegfs/inst1.d/beegfs-storage.conf
   template:
@@ -61,8 +58,7 @@
     tuneFileReadSize: "1m"
     tuneFileWriteSize: "1m"
     storeStorageDirectory: '/beegfs/storage-1'
-    tuneBindToNumaZone: "{{ first_hca_numa_node.stdout }}" # Use the first HCA NUMA node
-
+    tuneBindToNumaZone: "{{ numa_nic.results.0.stdout }}"
 
 - name: Copy /etc/beegfs/inst2.d/beegfs-storage.conf
   template:
@@ -77,4 +73,5 @@
     tuneFileReadSize: "1m"
     tuneFileWriteSize: "1m"
     storeStorageDirectory: '/beegfs/storage-2'
-    tuneBindToNumaZone: "{{ second_hca_numa_node.stdout }}" # Use the second HCA NUMA node
+    tuneBindToNumaZone: "{{ numa_nic.results.1.stdout }}"
+
