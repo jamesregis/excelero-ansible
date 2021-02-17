@@ -85,14 +85,6 @@
       lspci | grep -i 'Non-Volatile memory controller'
     executable: /bin/bash
   register: has_nvme_drive
-  ignore_errors: true
-
-# ## for debug .. can be removed
-# - name: Disable target only on node that hasn't NVMe drives
-#   systemd:
-#     name: nvmeshtarget
-#     state: stopped
-#     enabled: no
 
 - name: Enable target only on node that has NVMe drives
   systemd:
