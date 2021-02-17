@@ -1,8 +1,7 @@
 ---
 - name: Install BeeGFS management package
-  package:
+  dnf:
     name: beegfs-mgmtd
-    state: installed
 
 - name: Create /beegfs directory for management
   file:
