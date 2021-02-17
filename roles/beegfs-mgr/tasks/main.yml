@@ -25,7 +25,9 @@
 
 - name: Attach mgmt volume to host
   shell:
-    "/usr/bin/nvmesh_attach_volumes {{ mgmt_vol.name }}"
+    cmd: |
+      nvmesh_attach_volumes {{ mgmt_vol.name }}
+    executable: /bin/bash
   loop: "{{ mgmt_volume_to_create }}"
   loop_control:
     loop_var: "mgmt_vol"
@@ -70,9 +72,11 @@
 # hun hum ...
 - name: Configure and start BeeGFS
   shell:
-    "/opt/beegfs/sbin/beegfs-setup-mgmtd -p {{ item.mount_point }}"
+    cmd: |
+      /opt/beegfs/sbin/beegfs-setup-mgmtd -p {{ item.mount_point }}
+    executable: /bin/bash
   loop: "{{ mgmt_volume_to_create }}"
-  when: beegfs_already_initialized.results[0].matched|int == 0
+  when: beegfs_already_initialized.results[0].matched | int == 0
 
 - name: Enable and start beegfs-mgmtd
   systemd:
