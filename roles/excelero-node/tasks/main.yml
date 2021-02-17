@@ -129,16 +129,6 @@
 - name: Create and mount partitions
   import_tasks: create-and-mount-partition.yml
 
-- name: test
-  shell:
-    "/usr/bin/nvmesh volume show --name {{ item.name }}"
-  loop: "{{ volumes_to_create }}"
-  register: user_volume
-  run_once: true
-
-- debug: var=user_volume
-  run_once: true
-
 - debug:
-    msg: "Verify the nodes and check in to management to see 10 clients and 10 targets with 100 NVMe drives on the Dashboard page of WebUI."
+    msg: "Verify the nodes and check in to management to see the clients and the targets with the NVMe drives on the Dashboard page of WebUI."
   run_once: true
