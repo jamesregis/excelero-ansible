@@ -89,14 +89,14 @@
 - name: Enable target only on node that has NVMe drives
   systemd:
     name: nvmeshtarget
-    state: restarted
+    state: started
     enabled: yes
   when: has_nvme_drive.rc == 0
 
 - name: Enable and start NVMesh client
   systemd:
     name: nvmeshclient
-    state: restarted
+    state: started
     enabled: yes
 
 - name: Wait for targets and TOMA
