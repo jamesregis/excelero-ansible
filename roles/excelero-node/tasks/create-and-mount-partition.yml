@@ -20,7 +20,9 @@
 
 - name: Attach volumes to all hosts
   shell:
-    "/usr/bin/nvmesh_attach_volumes {{ item.name }}"  
+    cmd:
+      nvmesh_attach_volumes {{ item.name }}
+    executable: /bin/bash
   loop: "{{ volumes_to_create }}"
 
 # # TODO: cpu pining for process
