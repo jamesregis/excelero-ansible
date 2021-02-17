@@ -25,7 +25,25 @@
     state: directory
     owner: mongod
     group: mongod
-    mode: '0755'
+    mode: 0755
+
+- name: Create /etc/systemd/system/mongod.service.d directtory
+  file:
+    path: /etc/systemd/system/mongod.service.d
+    state: directory
+
+- name: Fix mongod.service systemd unit
+  copy:
+    content: |
+      [Unit]
+      After=network-online.target
+    dest: /etc/systemd/system/mongod.service.d/mongod.conf
+  register: mongod_unit
+
+- name: Reload systemd daemon
+  systemd:
+    daemon-reload: yes
+  when: mongod_unit.changed
 
 - name: Enable and start mongodb
   systemd:
