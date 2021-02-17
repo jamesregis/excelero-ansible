@@ -12,6 +12,7 @@
   changed_when: no
 
 - name: Set built-in tuned profile
-  command: "/usr/sbin/tuned-adm profile {{ tuned_active_builtin_profile }}"
-  when:
-    - tuned_active_builtin_profile not in tuned_active.stdout
+  command:
+    tuned-adm profile {{ tuned_active_builtin_profile }}
+  when: tuned_active_builtin_profile not in tuned_active.stdout
+
