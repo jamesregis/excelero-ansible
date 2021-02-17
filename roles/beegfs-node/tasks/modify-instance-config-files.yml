@@ -1,8 +1,9 @@
 ---
-
-- name: "Get port connected to the network"
+- name: Get port connected to the network
   shell:
-    "/usr/sbin/ibdev2netdev | grep -v Down | cut -d' ' -f 5"
+    cmd: |
+      ibdev2netdev | grep Up | awk '{ print $5 }'
+    executable: /bin/bash
   register: connected_interface
 
 - name: "Get NUMA number"
