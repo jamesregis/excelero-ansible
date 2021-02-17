@@ -16,11 +16,8 @@
 
 - name: Modify /etc/mongod.conf
   template:
-    src: 'etc/mongod.conf'
+    src: etc/mongod.conf
     dest: /etc/mongod.conf
-    mode: 0644
-    owner: root
-    group: root
 
 - name: Ensure /var/lib/mongo belongs to mongod user
   file:
@@ -36,15 +33,13 @@
     state: started
     enabled: yes
 
-# TODO: a revoir
 - name: "Ensure replica set {{ replica_set_name }} exists"
-  community.mongodb.mongodb_replicaset:
+  mongodb_replicaset:
     login_host: localhost
-    # login_user: admin
-    # login_password: admin
     replica_set: "{{ replica_set_name }}"
     members:
       - "{{ groups.mongod[0] }}:27017"
       - "{{ groups.mongod[1] }}:27017"
       - "{{ groups.mongod[2] }}:27017"
   when: groups.mongod.index(inventory_hostname) == 0
+
