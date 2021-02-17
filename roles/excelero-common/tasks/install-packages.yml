@@ -1,16 +1,10 @@
 ---
-- name: Gathering facts
-  setup:
-
 - name: Update before install kernel sources
   package:
     name: "*"
     state: latest
-#  register: update_package
 
-#- debug: var=update_package
-
-- name: Install specific kernel (nmesh build)
+- name: Install specific kernel (nvmesh build)
   dnf:
     disable_gpg_check: yes
     allow_downgrade: yes
@@ -20,10 +14,9 @@
       - https://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/kernel-{{ nvmesh_required_kernel }}.rpm
       - https://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/kernel-headers-{{ nvmesh_required_kernel }}.rpm
 
-## todo
-- name: Set default kernel
+- name: Set default kernel to boot on
   command:
-    "grubby --set-default=/boot/vmlinuz-{{ nvmesh_required_kernel }}"
+    grubby --set-default=/boot/vmlinuz-{{ nvmesh_required_kernel }}
 
 - name: Reboot host (if required) and wait for restart
   reboot:
