@@ -81,7 +81,9 @@
 
 - name: Check if there are connected NVMe drives
   shell:
-    "lspci  | grep -i 'Non-Volatile memory controller'"
+    cmd: |
+      lspci | grep -i 'Non-Volatile memory controller'
+    executable: /bin/bash
   register: has_nvme_drive
   ignore_errors: true
 
