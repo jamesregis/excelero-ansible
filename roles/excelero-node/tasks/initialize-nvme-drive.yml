@@ -6,12 +6,16 @@
     ansible_host: "{{ hostvars[inventory_hostname].inventory_hostname}}"
     groups: "{{ host_with_nvme_drives }}"
 
-- debug: var=groups
+- name: Copy get_drives.sh script
+  copy:
+    src: get_drives.sh
+    dest: /usr/bin/get_drives.sh
+    mode: 0755
 
-## Generate an array with the drive serial number and the status
+# Generate an array with the drive serial number and the status
 - name: Get drive status
-  shell:
-    "/usr/bin/nvmesh drive show --output-format rows | egrep -i '(Serial Number|Status)' | cut -d ':' -f 2 | sed 's/^[ \t]*//' | paste - - -d ' '" # | sed 's/\t/,/'"
+  command:
+    get_drives.sh
   register: nvme_drive_list
   run_once: true
   when: inventory_hostname == groups['excelero_mgrs'][0]
