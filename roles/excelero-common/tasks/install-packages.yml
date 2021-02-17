@@ -54,4 +54,7 @@
 
 - name: Set {{ default_python }} as default python (/usr/bin/python)
   shell:
-    "alternatives --set python /usr/bin/{{ default_python }} "
+    cmd: |
+      alternatives --set python /usr/bin/{{ default_python }}
+    executable: /bin/bash
+
