@@ -6,10 +6,10 @@
     enabled: yes
 
 - name: Get tuned profile
-  command: /usr/sbin/tuned-adm active
+  command:
+    tuned-adm active
   register: tuned_active
-  changed_when: false
-  ignore_errors: true
+  changed_when: no
 
 - name: Set built-in tuned profile
   command: "/usr/sbin/tuned-adm profile {{ tuned_active_builtin_profile }}"
