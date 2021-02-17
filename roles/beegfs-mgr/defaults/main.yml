@@ -1,8 +1,8 @@
 ---
-
 mgmt_volume_to_create:
   - name: "mgmtd1"
     size: "10G"
     raid_level: "0"
     stripe_width: "2"
     mount_point: "/beegfs/mgmtd"
+
