@@ -53,11 +53,13 @@
     - restart-client
     - restart-target
 
-# # TODO: a revoir : template jinja
-# - name: Disable RDDA transport                # Why disabled?
-#   lineinfile:
-#     path: "/etc/nvmesh/nvmesh.conf"
-#     line: 'MLX5_RDDA_ENABLED="False"'
+- name: Disable RDDA transport
+  lineinfile:
+    path: "/etc/nvmesh/nvmesh.conf"
+    line: MLX5_RDDA_ENABLED="False"
+  notify:
+    - restart-client
+    - restart-target
 
 - name: Kernel tuning recommendations
   template:
