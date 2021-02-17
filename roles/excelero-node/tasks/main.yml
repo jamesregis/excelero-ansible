@@ -102,16 +102,12 @@
 - name: Wait for targets and TOMA
   shell:
     cmd: |
-      "nvmesh target show | egrep -i '(Health|TOMA Status)' | cut -d ':' -f 2 | sed 's/^[ \t]*//' | paste - - -d ' ' | grep -v 'Healthy up' -c"
+      nvmesh target show --output-format json | jq -r '.[] | select (.tomaStatus!="up" or .health!="Healthy") | .tomaStatus + " " + .health'
     executable: /bin/bash
   retries: 10
   delay: 5
   register: nve_target_status
-  until: nve_target_status.stdout == "0"  
-  when: inventory_hostname == groups['excelero_mgrs'][0]
-  ignore_errors: true
-
-- debug: var=nve_target_status
+  until: nve_target_status.stdout == ""
   when: inventory_hostname == groups['excelero_mgrs'][0]
 
 - name: Initialize NVMe drives (if required)
