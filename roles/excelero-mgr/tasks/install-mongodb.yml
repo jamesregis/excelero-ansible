@@ -1,5 +1,4 @@
 ---
-
 - name: Install MongoDB repository
   yum_repository:
     name: mongodb-org-4.2
@@ -10,11 +9,10 @@
     gpgcheck: yes
 
 - name: Install MongoDB
-  package:
+  dnf:
     name:
       - mongodb-org
       - python3-pymongo
-    state: installed
 
 - name: Modify /etc/mongod.conf
   template:
