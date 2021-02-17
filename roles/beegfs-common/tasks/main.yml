@@ -9,7 +9,7 @@
     gpgcheck: no
 
 - name: Install BeeGFS packages
-  package:
+  dnf:
     name:
       - beegfs-client
       - beegfs-helperd
@@ -17,4 +17,3 @@
       - beegfs-storage
       - libbeegfs-ib
       - beegfs-client-devel
-    state: installed
