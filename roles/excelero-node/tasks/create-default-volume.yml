@@ -8,11 +8,6 @@
   register: check_volume
   run_once: true
 
-- debug: var=check_volume.stdout
-
-- debug: var=check_volume.stdout|length
-  when: check_volume.stdout == "[]" or  check_volume.stdout == ""
-
 - name: Create NVMesh volume ({{ volume_name }})
   shell:
     cmd:
