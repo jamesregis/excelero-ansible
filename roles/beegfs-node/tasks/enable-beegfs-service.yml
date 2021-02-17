@@ -1,5 +1,4 @@
 ---
-
 - name: Disable generic beegfs services
   systemd:
     name: "{{ item }}"
@@ -7,17 +6,6 @@
   loop:
     - beegfs-meta
     - beegfs-storage
-
-- name: Enable specific beegfs services
-  systemd:
-    name: "{{ item }}"
-    state: started
-    enabled: yes
-  loop:
-    - beegfs-meta@inst1
-    - beegfs-meta@inst2
-    - beegfs-storage@inst1
-    - beegfs-storage@inst2
 
 - name: Create systemd override folder
   file:
@@ -44,3 +32,15 @@
 - name: Reload systemd
   systemd:
     daemon_reload: yes
+
+- name: Enable specific beegfs services
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - beegfs-meta@inst1
+    - beegfs-meta@inst2
+    - beegfs-storage@inst1
+    - beegfs-storage@inst2
+
