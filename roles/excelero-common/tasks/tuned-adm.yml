@@ -1,7 +1,4 @@
-- name: Install tuned
-  package:
-    name: tuned
-
+---
 - name: Start tuned and enable at boot time
   systemd:
     name: tuned

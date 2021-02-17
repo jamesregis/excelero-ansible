@@ -50,7 +50,7 @@
       - perl-Getopt-Long
       - python36
       - jq
-    state: installed
+      - tuned
 
 - name: Set {{ default_python }} as default python (/usr/bin/python)
   shell:
