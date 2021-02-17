@@ -3,7 +3,7 @@
   systemd:
     name: tuned
     state: started
-    enabled: true
+    enabled: yes
 
 - name: Get tuned profile
   command: /usr/sbin/tuned-adm active
