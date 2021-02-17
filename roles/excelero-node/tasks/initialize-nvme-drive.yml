@@ -1,8 +1,5 @@
 ---
-
-
 # TODO: a vérifier .... add_host ne s'execute que sur 1 seul nœud
-
 - name: "Add host {{ hostvars[inventory_hostname].inventory_hostname }} to live inventory ({{ host_with_nvme_drives }})"
   add_host:
     name: "{{ hostvars[inventory_hostname].inventory_hostname }}"
