@@ -1,11 +1,7 @@
 ---
-
 - name: Print index
   debug:
     msg: "Index is {{ groups['beegfs_nodes'].index(inventory_hostname)|int + 1 }}"
-
-
-- debug: var=groups['beegfs_mgr'][0]
 
 - set_fact:
     mgmt_node: "{{ groups['beegfs_nodes'][0] }}"
@@ -15,8 +11,6 @@
   find:
     path: "/beegfs/meta-1"
   register: meta_1_already_initialized
-
-- debug: var=meta_1_already_initialized
 
 - name: Check if directory /beegfs/meta-2 is empty (not initialized)
   find:
