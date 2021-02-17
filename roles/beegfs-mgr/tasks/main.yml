@@ -33,7 +33,7 @@
     loop_var: "mgmt_vol"
 
 - name: Create a XFS primary partition
-  community.general.parted:
+  parted:
     device: "/dev/nvmesh/{{ item.name }}"
     number: 1
     label: "gpt"
@@ -43,7 +43,7 @@
   loop: "{{ mgmt_volume_to_create }}"
 
 - name: Format partition with XFS
-  community.general.filesystem:
+  filesystem:
     fstype: xfs
     dev: "/dev/nvmesh/{{ item.name }}p1"
     opts: "-K -d su=4k,sw=8 -l version=2,su=4k -isize=512"
@@ -51,15 +51,13 @@
   run_once: true
 
 - name: Mount default volumes
-  ansible.posix.mount:
+  mount:
     path: "{{ item.mount_point }}"
     src: "/dev/nvmesh/{{ item.name }}p1"
     fstype: xfs
-    state: present
     opts: "rw,noatime,nodiratime,largeio,inode64,noauto"
     state: mounted
   loop: "{{ mgmt_volume_to_create }}"
-
 
 - name: Check if BeeGFS is already initialized
   find:
