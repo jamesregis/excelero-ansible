@@ -22,7 +22,7 @@
 
 - name: Initialize NVMe drives (if required)
   shell:
-    "/usr/bin/nvmesh drive format -y --name {{ item.split(' ')[0] }}"
-  loop: "{{ nvme_drive_list.stdout_lines|default([]) }}"
+    nvmesh drive format -y --name {{ item }}
+  loop: "{{ nvme_drive_list.stdout_lines }}"
   run_once: true
-  when: inventory_hostname == groups['excelero_mgrs'][0] and item.split(" ")[1] == "Not_Initialized"
+  when: inventory_hostname == groups['excelero_mgrs'][0]
