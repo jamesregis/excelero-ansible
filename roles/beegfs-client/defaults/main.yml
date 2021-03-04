@@ -5,3 +5,5 @@ ofed_driver_name: "MLNX_OFED_LINUX-{{ ofed_version }}-{{ os_type }}{{ os_version
 
 nvidia_ofed_url: "http://content.mellanox.com/ofed/MLNX_OFED-{{ ofed_version }}/{{ ofed_driver_name }}.tgz"
 ofed_driver_path: "/tmp/{{ ofed_driver_name }}.tgz"
+
+beegfs_mgmt_dns: "beegfs-mgmt"
