@@ -1,0 +1,13 @@
+{% if device == 'ib0' %}
+{% set addr_last_digit = host_index|int * 2 + 1 %}
+{% elif device == 'ib2'%}
+{% set addr_last_digit = host_index|int * 2 + 2 %}
+{% endif %}
+DEVICE={{ device }}
+TYPE=Infiniband
+BOOTPROTO=static
+BROADCAST={{ beegfs_broadcast }}
+IPADDR={{ beegfs_addr_prefix }}.{{ addr_last_digit }}
+NETMASK={{ beegfs_netmask }}
+NETWORK={{ beegfs_network }}
+ONBOOT=yes
