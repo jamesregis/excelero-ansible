@@ -14,7 +14,7 @@
 # --- Section 1.1: [Basic Settings] ---
 #
 
-sysMgmtdHost                 = {{ groups['beegfs_mgr'][0] }}
+sysMgmtdHost                 = {{ beegfs_mgmt_dns }}
 
 storeMetaDirectory           = {{ storeMetaDirectory }}
 storeAllowFirstRunInit       = true
@@ -123,7 +123,7 @@ tuneUsePerUserMsgQueues      = false
 # connection to the other hosts  primary interface (falling back to another
 # interface again if necessary).
 # Note: The priority of node interfaces can be configured using the
-#    "connInterfacesFile" parameter. 
+#    "connInterfacesFile" parameter.
 # Default: 900
 
 # [connInterfacesFile]
@@ -157,7 +157,7 @@ tuneUsePerUserMsgQueues      = false
 # [connPortShift]
 # Shifts all following UDP and TCP ports according to the specified value.
 # Intended to make port configuration easier in case you do not want to
-# configure each port individually.  
+# configure each port individually.
 # Default: 0
 
 # [connNetFilterFile]
@@ -231,7 +231,7 @@ tuneUsePerUserMsgQueues      = false
 # [logNoDate]
 # Defines whether "date & time" (=false) or the current "time only" (=true)
 # should be logged.
-# Default: false 
+# Default: false
 
 # [logNumLines]
 # The maximum number of lines per log file.
@@ -243,7 +243,7 @@ tuneUsePerUserMsgQueues      = false
 # Default: 5
 
 # [logStdFile]
-# The path and filename of the log file for standard log messages. The parameter 
+# The path and filename of the log file for standard log messages. The parameter
 # will be considered only if logType value is not equal to syslog. If no name
 # is specified, the messages will be written to the console.
 # Default: /var/log/beegfs-meta.log
@@ -315,22 +315,22 @@ tuneUsePerUserMsgQueues      = false
 # Default: 180
 
 # [sysAllowUserSetPattern]
-# If set to true, non-privileged users are allowed to modify stripe pattern 
-# settings for directories they own. 
+# If set to true, non-privileged users are allowed to modify stripe pattern
+# settings for directories they own.
 # Default: false
 
 # [sysFileEventLogTarget]
-# If set, the metadata server will log modification events (which it receives 
-# from clients) to a Unix Socket specified here. External tools may listen on 
+# If set, the metadata server will log modification events (which it receives
+# from clients) to a Unix Socket specified here. External tools may listen on
 # this socket and process the information.
 # Example: sysFileEventLogTarget = unix:/var/beegfs_eventlog
 # Note: Each event will be logged in the following format:
 #  droppedSeqNo (64bit) - missedSeqNo (64bit) - eventType (32bit) - ModifiedPath
-# Increased dropped sequence numbers indicate communication errors. Increased 
+# Increased dropped sequence numbers indicate communication errors. Increased
 # missed sequence numbers indicate that a event could not be properly reported.
 # The following event types are possible:
-#  0(file contents flushed), 1(truncate), 2(set attribute), 3(file closed), 
-#  4(create), 5(mkdir), 6(mknode), 7(create symlink), 8(rmdir), 9(unlink), 
+#  0(file contents flushed), 1(truncate), 2(set attribute), 3(file closed),
+#  4(create), 5(mkdir), 6(mknode), 7(create symlink), 8(rmdir), 9(unlink),
 #  10(create hardlink), 11(rename)
 # Default: <unset>
 
