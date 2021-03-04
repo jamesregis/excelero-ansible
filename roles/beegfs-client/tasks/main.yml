@@ -31,6 +31,17 @@
     src: etc/beegfs/beegfs-client.conf.j2
     dest: /etc/beegfs/beegfs-client.conf
 
+- name: Enable OFED library
+  template:
+    src: etc/beegfs/beegfs-client-autobuild.conf.j2
+    dest: /etc/beegfs/beegfs-client-autobuild.conf
+
+- name: Build BeeGFS client kernel client module
+  shell:
+    cmd:
+      /etc/init.d/beegfs-client rebuild
+    executable: /bin/bash
+
 - name: BeeGFS Client setup script
   shell:
     "/opt/beegfs/sbin/beegfs-setup-client -m {{ groups['beegfs_mgr'][0] }}"
@@ -39,11 +50,6 @@
   file:
     path: "{{ beegfs_mnt_directory }}"
     state: directory
-
-- name: Enable OFED library
-  template:
-    src: etc/beegfs/beegfs-client-autobuild.conf.j2
-    dest: /etc/beegfs/beegfs-client-autobuild.conf
 
 - name: Start and enable beegfs-helperd & beegfs-client
   systemd:
