@@ -30,27 +30,27 @@
 - name: Register the service instances on each node with unique ID (meta-1)
   shell:
     cmd: |
-      /opt/beegfs/sbin/beegfs-setup-meta -c /etc/beegfs/inst1.d/beegfs-meta.conf -p /beegfs/meta-1 -s {{ index_node }}1 -S meta1-inst1 -m  {{ mgmt_node }}
+      /opt/beegfs/sbin/beegfs-setup-meta -c /etc/beegfs/inst1.d/beegfs-meta.conf -p /beegfs/meta-1 -s {{ index_node }}10 -S meta1-{{ index_node }}a -m {{ mgmt_node }}
     executable: /bin/bash
   when: meta_1_already_initialized.files == []
 
 - name: Register the service instances on each node with unique ID (meta-2)
   shell:
     cmd: |
-      /opt/beegfs/sbin/beegfs-setup-meta -c /etc/beegfs/inst2.d/beegfs-meta.conf -p /beegfs/meta-2 -s {{ index_node }}2 -S meta1-inst2 -m {{ mgmt_node }}
+      /opt/beegfs/sbin/beegfs-setup-meta -c /etc/beegfs/inst2.d/beegfs-meta.conf -p /beegfs/meta-2 -s {{ index_node }}20 -S meta2-{{ index_node }}b -m {{ mgmt_node }}
     executable: /bin/bash
   when: meta_2_already_initialized.files == []
 
 - name: Register the service instances on each node with unique ID (storage-1)
   shell:
     cmd: |
-      /opt/beegfs/sbin/beegfs-setup-storage -c /etc/beegfs/inst1.d/beegfs-storage.conf -p /beegfs/storage-1 -s {{ index_node }}1 -i {{ index_node }}11 -S stor1-inst1 -m {{ mgmt_node }}
+      /opt/beegfs/sbin/beegfs-setup-storage -c /etc/beegfs/inst1.d/beegfs-storage.conf -p /beegfs/storage-1 -s {{ index_node }}1 -i {{ index_node }}11 -S stor1-{{ index_node }}a -m {{ mgmt_node }}
     executable: /bin/bash
   when: storage_1_already_initialized.files == []
 
 - name: Register the service instances on each node with unique ID (storage-2)
   shell:
     cmd: |
-      /opt/beegfs/sbin/beegfs-setup-storage -c /etc/beegfs/inst2.d/beegfs-storage.conf -p /beegfs/storage-2 -s {{ index_node }}2 -i {{ index_node }}21 -S stor1-inst2 -m {{ mgmt_node }}
+      /opt/beegfs/sbin/beegfs-setup-storage -c /etc/beegfs/inst2.d/beegfs-storage.conf -p /beegfs/storage-2 -s {{ index_node }}2 -i {{ index_node }}21 -S stor2-{{ index_node }}b -m {{ mgmt_node }}
     executable: /bin/bash
   when: storage_2_already_initialized.files == []
