@@ -1,5 +1,30 @@
 ---
 # Defines deployment design and assigns role to server groups
+- hosts: excelero_nodes
+  gather_facts: yes
+  become: yes
+  pre_tasks:
+    - name: set excelero common install 'In Progress'
+      run_once: yes
+      set_stats:
+        data:
+          installer_phase_excelero_common:
+            status: "In Progress"
+            start: "{{ lookup('pipe', 'date +%Y%m%d%H%M%SZ') }}"
+
+  tasks:
+    - import_role:
+        name: excelero-common
+
+  post_tasks:
+    - name: set excelero common install 'Complete'
+      run_once: yes
+      set_stats:
+        data:
+          installer_phase_excelero_common:
+            status: "Complete"
+            end: "{{ lookup('pipe', 'date +%Y%m%d%H%M%SZ') }}"
+
 - hosts: excelero_mgrs
   gather_facts: yes
   become: yes
@@ -13,8 +38,6 @@
             start: "{{ lookup('pipe', 'date +%Y%m%d%H%M%SZ') }}"
 
   tasks:
-    - import_role:
-        name: excelero-common
     - import_role:
         name: excelero-mgr
 
@@ -30,6 +53,7 @@
 - hosts: excelero_nodes
   gather_facts: yes
   become: yes
+  serial: "{{ serial | default(2) }}"
   pre_tasks:
     - name: set excelero node install 'In Progress'
       run_once: yes
@@ -40,8 +64,6 @@
             start: "{{ lookup('pipe', 'date +%Y%m%d%H%M%SZ') }}"
 
   tasks:
-    - import_role:
-       name: excelero-common
     - import_role:
        name: excelero-node
 
