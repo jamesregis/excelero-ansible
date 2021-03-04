@@ -11,5 +11,6 @@ nic_1:
 nic_2:
   - ib2
 
-systctl_file: "/etc/sysctl.d/90-beegfs.conf"
+beegfs_systctl_file: "/etc/sysctl.d/90-beegfs.conf"
 
+beegfs_mgmt_dns: beegfs-mgmt
