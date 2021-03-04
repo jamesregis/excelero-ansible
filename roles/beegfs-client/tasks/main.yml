@@ -1,11 +1,10 @@
 ---
-
-
-- name: Install specific kernel (nmesh build)
+- name: Install packages
   package:
     name:
+      - beegfs-client
+      - beegfs-helperd
       - https://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/kernel-devel-{{ nvmesh_required_kernel}}.rpm
-    state: installed
 
 - name: Install OFED driver
   include: install-nvidia-ofed.yml
