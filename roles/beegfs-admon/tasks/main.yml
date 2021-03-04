@@ -38,3 +38,11 @@
     - grafana-server
     - influxdb
     - beegfs-mon
+
+- name: Import BeeGFS Grafana Dashboard
+  shell:
+    cmd: |
+      bash import-dashboards default
+    chdir: /opt/beegfs/scripts/grafana
+    executable: /bin/bash
+
