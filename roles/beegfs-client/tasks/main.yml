@@ -10,7 +10,7 @@
   include: install-nvidia-ofed.yml
 
 - name: Change rdma_reject function definition (quick-fix)
-  ansible.builtin.lineinfile:
+  lineinfile:
     path: "/opt/beegfs/src/client/client_module_7/source/common/net/sock/ibv/IBVSocket.c"
     regexp: 'rdma_reject\(cm_id, NULL, 0\);'
     line: "         rdma_reject(cm_id, NULL, 0, IB_CM_REJ_UNSUPPORTED);"
