@@ -1,6 +1,6 @@
 client_interfaces:
   - ib0
-  - ib3
+  - ib2
 
 # subnets to communicate with storage and meta
 meta_storage_subnets:
