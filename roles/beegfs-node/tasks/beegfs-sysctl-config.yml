@@ -1,9 +1,9 @@
 ---
-- name: Configure systctl for BeeGFS in {{ systctl_file }}
+- name: Configure systctl for BeeGFS in {{ beegfs_systctl_file }}
   sysctl:
     name: "{{ item[0] }}"
     value: "{{ item[1] }}"
-    sysctl_file: "{{ systctl_file }}"
+    sysctl_file: "{{ beegfs_systctl_file }}"
   loop:
     - ['vm.dirty_background_ratio', '5']
     - ['vm.dirty_ratio', '10']
