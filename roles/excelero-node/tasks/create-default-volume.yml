@@ -1,25 +1,59 @@
 ---
 
+- name: Print index
+  debug:
+    msg: "Index is {{ groups['excelero_nodes'].index(inventory_hostname)|int + 1 }}"
+
+- set_fact:
+    x_index_node: "{{ groups['excelero_nodes'].index(inventory_hostname)|int + 1 }}"
+
+- set_fact:
+    excelero_index_node: "00{{ x_index_node }}"
+  when: 'x_index_node|int > 0 and x_index_node|int <= 9 and "mgmt" not in volume_prefix'
+
+- set_fact:
+    excelero_index_node: "0{{ x_index_node }}"
+  when: 'x_index_node|int >= 10 and x_index_node|int < 100 and "mgmt" not in volume_prefix'
+
+# up to 999 storage hosts .. it should be enough ..
+- set_fact:
+    excelero_index_node: "{{ x_index_node }}"
+  when: 'x_index_node|int >= 100 and x_index_node|int < 1000 and "mgmt" not in volume_prefix'
+
+- debug: var=volume_prefix
+
+- set_fact:
+    volume_name: "{{ volume_prefix }}{{ excelero_index_node }}{{ volume_index }}"
+  when: '"mgmt" not in volume_prefix'
+
+- set_fact:
+    volume_name: "{{ volume_prefix }}"
+  when: '"mgmt" in volume_prefix'
+
 - name: "Check if a volume with the same name ({{ volume_name }}) already exists"
   shell:
     cmd:
       nvmesh volume show --name {{ volume_name }}
     executable: /bin/bash
   register: check_volume
-  run_once: true
 
-- name: Create NVMesh volume ({{ volume_name }})
+- name: "Create NVMesh volume ({{ volume_name }})"
   shell:
-    cmd:
-      nvmesh volume create -n {{ volume_name }} -rl {{ volume_raid_level }} --stripe-width {{ volume_stripe_width }} -c {{ volume_size }}
+    cmd: >
+      nvmesh volume create -n {{ volume_name }} -rl {{ volume_raid_level }} -c {{ volume_size }}
+      --protection-level {{ protection_level }} --data-blocks {{ data_blocks }}
+      --parity-blocks {{ parity_blocks }}
     executable: /bin/bash
   when: check_volume.stdout == "[]" or
         check_volume.stdout == ""
-  run_once: true
+  register: nvmesh_create_volume
 
-- name: Attach volumes to one host to enable partition and format
+- name: "Attach volume {{ volume_name }} to {{ inventory_hostname }} to enable partition and format"
   shell:
     cmd:
       /usr/bin/nvmesh_attach_volumes {{ volume_name }}
     executable: /bin/bash
-  run_once: true
+
+- pause:
+    seconds: 10
+  when: nvmesh_create_volume.changed
