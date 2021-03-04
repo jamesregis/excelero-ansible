@@ -48,7 +48,7 @@
 
 - name: BeeGFS Client setup script
   shell:
-    "/opt/beegfs/sbin/beegfs-setup-client -m {{ groups['beegfs_mgr'][0] }}"
+    "/opt/beegfs/sbin/beegfs-setup-client -m {{ beegfs_mgmt_dns }}"
 
 - name: Create BeeGFS mount directory
   file:
