@@ -1,29 +1,54 @@
 ---
+
+- set_fact:
+    x_index_node: "{{ groups['excelero_nodes'].index(inventory_hostname)|int + 1 }}"
+
+- set_fact:
+    excelero_index_node: "00{{ x_index_node }}"
+  when: x_index_node|int > 0 and x_index_node|int <= 9
+
+- set_fact:
+    excelero_index_node: "0{{ x_index_node }}"
+  when: x_index_node|int >= 10 and x_index_node|int < 100
+
+# up to 999 storage hosts
+- set_fact:
+    excelero_index_node: "0{{ x_index_node }}"
+  when: x_index_node|int >= 100 and x_index_node|int < 1000
+
+- set_fact:
+    volume_name: "{{ volume_prefix }}{{ excelero_index_node }}{{ volume_index }}"
+
 - name: Create a XFS primary partition
   parted:
-    device: "/dev/nvmesh/{{ item.name }}"
+    device: "/dev/nvmesh/{{ volume_name }}"
     number: 1
     label: "gpt"
     part_start: "256s"
     part_end: "100%"
     state: present
-  loop: "{{ volumes_to_create }}"
-  run_once: true
+
+- name: Get partition name
+  shell:
+    cmd:
+      "ls /dev/nvmesh/{{ volume_name }}* | grep -E '\/dev\/nvmesh\/{{ volume_name }}[a-z0-9]+'"
+    executable: /bin/bash
+  register: nvmesh_partition
+
+- debug: var=nvmesh_partition
 
 - name: Format partition with XFS
   filesystem:
     fstype: xfs
-    dev: "/dev/nvmesh/{{ item.name }}p1"
+    dev: "{{ nvmesh_partition.stdout }}"
     opts: "-K -d su=4k,sw=8 -l version=2,su=4k -isize=512"
-  loop: "{{ volumes_to_create }}"
-  run_once: true
 
-- name: Attach volumes to all hosts
-  shell:
-    cmd:
-      nvmesh_attach_volumes {{ item.name }}
-    executable: /bin/bash
-  loop: "{{ volumes_to_create }}"
+# - name: Attach volumes to all hosts
+#   shell:
+#     cmd:
+#       nvmesh_attach_volumes {{ item.name }}
+#     executable: /bin/bash
+#   loop: "{{ volumes_to_create }}"
 
 # # TODO: cpu pining for process
 # # https://community.mellanox.com/s/article/howto-configure-and-test-beegfs-with-rdma
@@ -31,16 +56,14 @@
 
 - name: Create /beegfs directory and subdirectories
   file:
-    path: "{{ item.mount_point }}"
+    path: "{{ volume_mount_point }}"
     state: directory
-  loop: "{{ volumes_to_create }}"
 
 - name: Mount default volumes
   mount:
-    path: "{{ item.mount_point }}"
-    src: "/dev/nvmesh/{{ item.name }}p1"
+    path: "{{ volume_mount_point }}"
+    src: "{{ nvmesh_partition.stdout }}"
     fstype: xfs
     opts: "rw,noatime,nodiratime,largeio,inode64,noauto"
     state: mounted
-  loop: "{{ volumes_to_create }}"
 
