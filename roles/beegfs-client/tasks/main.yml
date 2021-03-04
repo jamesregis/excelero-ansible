@@ -30,6 +30,11 @@
     src: etc/beegfs/beegfs-client.conf.j2
     dest: /etc/beegfs/beegfs-client.conf
 
+- name: Create BeeGFS mounts file
+  template:
+    src: etc/beegfs/beegfs-mounts.conf.j2
+    dest: /etc/beegfs/beegfs-mounts.conf
+
 - name: Enable OFED library
   template:
     src: etc/beegfs/beegfs-client-autobuild.conf.j2
