@@ -1,0 +1,76 @@
+---
+
+- name: Create /beegfs directory for management
+  file:
+    path: "{{ mgmt_mount_point}}"
+    state: directory
+
+- name: Create mgmt volume
+  include_role:
+    name: excelero-node
+    tasks_from: create-default-volume.yml
+  vars:
+    volume_prefix: "{{ mgmt_volume_name }}"
+    volume_index: ""
+    volume_size: "{{ mgmt_size }}"
+    volume_raid_level: "{{ mgmt_raid_level }}"
+    volume_mount_point: "{{ mgmt_mount_point }}"
+
+- name: Attach mgmt volume to host
+  shell:
+    cmd: |
+      nvmesh_attach_volumes {{ mgmt_volume_name }}
+    executable: /bin/bash
+
+- name: Create primary partition
+  parted:
+    device: "/dev/nvmesh/{{ mgmt_volume_name }}"
+    number: 1
+    label: "gpt"
+    part_start: "256s"
+    part_end: "100%"
+    state: present
+
+- name: Get partition name
+  shell:
+    cmd:
+      "ls /dev/nvmesh/{{ mgmt_volume_name }}* | grep -E '\/dev\/nvmesh\/{{ mgmt_volume_name }}[a-z0-9]+'"
+    executable: /bin/bash
+  register: mgmt_partition
+
+- debug: var=mgmt_partition
+
+- name: Format partition with XFS
+  filesystem:
+    fstype: xfs
+    dev: "{{ mgmt_partition.stdout }}"
+    opts: "-K -d su=4k,sw=8 -l version=2,su=4k -isize=512"
+
+- name: Mount default volumes
+  mount:
+    path: "{{ mgmt_mount_point }}"
+    src: "{{ mgmt_partition.stdout }}"
+    fstype: xfs
+    opts: "rw,noatime,nodiratime,largeio,inode64,noauto"
+    state: mounted
+
+- name: Check if BeeGFS is already initialized
+  find:
+    path: "{{ mgmt_mount_point }}"
+  register: beegfs_already_initialized
+
+- debug: var=beegfs_already_initialized
+
+# hun hum ...
+- name: Configure and start BeeGFS
+  shell:
+    cmd: |
+      /opt/beegfs/sbin/beegfs-setup-mgmtd -p {{ mgmt_mount_point }}
+    executable: /bin/bash
+  when: beegfs_already_initialized.matched | int == 0
+
+- name: Enable and start beegfs-mgmtd
+  systemd:
+    name: beegfs-mgmtd
+    state: started
+    enabled: yes
