@@ -14,7 +14,7 @@
 # --- Section 1.1: [Basic Settings] ---
 #
 
-sysMgmtdHost                 = {{ groups['beegfs_mgr'][0] }}
+sysMgmtdHost                 =  {{ beegfs_mgmt_dns }}
 
 storeStorageDirectory        = {{ storeStorageDirectory }}
 storeAllowFirstRunInit       = true
