@@ -1,4 +1,6 @@
+
 ---
+
 - name: Optimize MLX5 configuration
   shell:
     cmd: |
@@ -20,8 +22,9 @@
     src: nvmesh_api_secrets.j2
     dest: "{{ ansible_env.HOME }}/.nvmesh_cli_files/nvmesh_api_secrets"
 
-- pause:
-    prompt: "Before continue, make sur the API credentials are the good ones !"
+# useless
+# - pause:
+#     prompt: "Before continue, make sur the API credentials are the good ones !"
 
 - name: Install NVMesh core and utils
   package:
@@ -29,7 +32,7 @@
       - nvmesh-core
       - nvmesh-utils
       - nvme-cli
-#       # - nvmesh-nvmft   # we do not need the NVMeoF transport
+      # - nvmesh-nvmft   # we do not need the NVMeoF transport
 
 - set_fact:
     management_server_with_port: "{{ management_server_with_port}} + [ '{{ item }}'+':4001' ]"
@@ -117,17 +120,26 @@
 - name: Create default volumes
   include_tasks: create-default-volume.yml
   vars:
-    volume_name: "{{ nvme_volume.name }}"
+    volume_index: "{{ nvme_volume.volume_index }}"
+    volume_prefix: "{{ nvme_volume.volume_prefix }}"
     volume_size: "{{ nvme_volume.size }}"
     volume_raid_level: "{{ nvme_volume.raid_level }}"
-    volume_stripe_width: "{{ nvme_volume.stripe_width }}"
     volume_mount_point: "{{ nvme_volume.mount_point }}"
   loop: "{{ volumes_to_create }}"
   loop_control:
     loop_var: nvme_volume
 
 - name: Create and mount partitions
-  import_tasks: create-and-mount-partition.yml
+  include_tasks: create-and-mount-partition.yml
+  vars:
+    volume_index: "{{ nvme_volume.volume_index }}"
+    volume_prefix: "{{ nvme_volume.volume_prefix }}"
+    volume_size: "{{ nvme_volume.size }}"
+    volume_raid_level: "{{ nvme_volume.raid_level }}"
+    volume_mount_point: "{{ nvme_volume.mount_point }}"
+  loop: "{{ volumes_to_create }}"
+  loop_control:
+    loop_var: nvme_volume
 
 - debug:
     msg: "Verify the nodes and check in to management to see the clients and the targets with the NVMe drives on the Dashboard page of WebUI."
