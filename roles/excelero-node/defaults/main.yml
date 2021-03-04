@@ -1,5 +1,4 @@
 ---
-
 spread_resub_work: 2
 min_local_nvmeqs: 32
 max_local_nvmeqs: 32
@@ -7,11 +6,10 @@ max_local_nvmeqs: 32
 configured_nics: "ib0;ib2"
 
 meta_size: "150G"
-storage_size: "30T"
+storage_size: "25T"
 protection_level: full # full, minimal, ignore
 data_blocks: 8
 parity_blocks: 2
-
 
 volumes_to_create:
   - volume_index: a
