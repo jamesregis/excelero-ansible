@@ -1,32 +1,37 @@
 ---
+
 spread_resub_work: 2
 min_local_nvmeqs: 32
 max_local_nvmeqs: 32
 
 configured_nics: "ib0;ib2"
 
-meta_size: "100G"
-storage_size: "500G"
+meta_size: "150G"
+storage_size: "30T"
+protection_level: full # full, minimal, ignore
+data_blocks: 8
+parity_blocks: 2
+
 
 volumes_to_create:
-  - name: meta-1
+  - volume_index: a
+    volume_prefix: meta
     size: "{{ meta_size }}"
-    raid_level: "0"
-    stripe_width: "2"
+    raid_level: "ec"
     mount_point: "/beegfs/meta-1"
-  - name: meta-2
+  - volume_index: b
+    volume_prefix: meta
     size: "{{ meta_size }}"
-    raid_level: "0"
-    stripe_width: "2"
+    raid_level: "ec"
     mount_point: "/beegfs/meta-2"
-  - name: storage-1
+  - volume_index: a
+    volume_prefix: stor
     size: "{{ storage_size }}"
-    raid_level: "0"
-    stripe_width: "2"
+    raid_level: "ec"
     mount_point: "/beegfs/storage-1"
-  - name: storage-2
+  - volume_index: b
+    volume_prefix: stor
     size: "{{ storage_size }}"
-    raid_level: "0"
-    stripe_width: "2"
+    raid_level: "ec"
     mount_point: "/beegfs/storage-2"
 
