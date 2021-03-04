@@ -8,12 +8,54 @@
     gpgkey: "{{ beegfs_gpgkey }}"
     gpgcheck: no
 
-- name: Install BeeGFS packages
+- name: Install BeeGFS packages BeeGFS Management
+  dnf:
+    name:
+      - beegfs-mgmtd
+  when: inventory_hostname in groups['beegfs_mgr']
+
+- name: Install BeeGFS packages in BeeGFS Meta
+  dnf:
+    name:
+      - beegfs-meta
+  when: inventory_hostname in groups['beegfs_meta']
+
+- name: Install BeeGFS packages in BeeGFS Storage
+  dnf:
+    name:
+      - beegfs-storage
+      - libbeegfs-ib
+  when: inventory_hostname in groups['beegfs_nodes'] # TODO: chang to beegfs_storages
+
+- name: Install BeeGFS packages in BeeGFS Clients
   dnf:
     name:
       - beegfs-client
-      - beegfs-helperd
-      - beegfs-meta
-      - beegfs-storage
       - libbeegfs-ib
-      - beegfs-client-devel
+      - beegfs-helperd
+      - elfutils-libelf-devel
+      - beegfs-ctl
+  when: inventory_hostname in groups['beegfs_clients']
+
+- name: Install BeeGFS packages in BeeGFS Admon
+  dnf:
+    name:
+      - beegfs-client
+  when: inventory_hostname in groups['beegfs_admon']
+
+- name: Configure Infiniband network interface
+  template:
+    src: etc/sysconfig/network-scripts/ifcfg-ib
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item }}"
+  loop: "{{ beegfs_nics }}"
+  vars:
+    device: "{{ item }}"
+    host_index: "{{ groups['beegfs_nodes'].index(inventory_hostname)|int }}"
+  notify:
+    - restart-network
+
+- name: Add BeeGFS management node in /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    regexp: "{{ beegfs_mgmt_dns }}"
+    line: "{{ beegfs_mgmt_ip }} {{ beegfs_mgmt_dns }}"

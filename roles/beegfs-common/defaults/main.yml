@@ -1,3 +1,14 @@
-beegfs_repo: https://www.beegfs.io/release/beegfs_7.2/dists/rhel8
-beegfs_gpgkey: https://www.beegfs.io/release/beegfs_7.2/gpg/RPM-GPG-KEY-beegfs
-beegfs_repo_filename: beegfs-rhel8.repo
+beegfs_repo: https://www.beegfs.io/release/beegfs_7.2.1/dists/rhel8
+beegfs_gpgkey: https://www.beegfs.io/release/beegfs_7.2.1/gpg/RPM-GPG-KEY-beegfs
+beegfs_repo_filename: beegfs-rhel8
+
+beegfs_addr_prefix: "192.168.0"
+beegfs_netmask: "255.255.255.0"
+beegfs_network: "{{ beegfs_addr_prefix }}.0"
+beegfs_broadcast: "{{ beegfs_addr_prefix }}.255"
+beegfs_nics:
+  - ib0
+  - ib2
+
+beegfs_mgmt_ip: "{{ beegfs_addr_prefix }}.1"
+beegfs_mgmt_dns: "beegfs-mgmt"
