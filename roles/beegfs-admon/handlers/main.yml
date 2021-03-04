@@ -1,0 +1,6 @@
+---
+- name: restart-beegfs-mon
+  systemd:
+    name: beegfs-mon
+    state: restarted
+
