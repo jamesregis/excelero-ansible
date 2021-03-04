@@ -4,7 +4,7 @@
     msg: "Index is {{ groups['beegfs_nodes'].index(inventory_hostname)|int + 1 }}"
 
 - set_fact:
-    mgmt_node: "{{ groups['beegfs_nodes'][0] }}"
+    mgmt_node: "{{ beegfs_mgmt_dns }}"
     index_node: "{{ groups['beegfs_nodes'].index(inventory_hostname)|int + 1 }}"
 
 - name: Check if directory /beegfs/meta-1 is empty (not initialized)
