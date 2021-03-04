@@ -1,0 +1,45 @@
+---
+- name: Install epel release
+  package:
+    name: epel-release
+
+- name: Add InfluxDB repository
+  yum_repository:
+    name: influxdb
+    description: InfluxDB Repository - RHEL $releasever
+    file: influxdb
+    baseurl: https://repos.influxdata.com/rhel/$releasever/$basearch/stable
+    gpgkey: https://repos.influxdata.com/influxdb.key
+    enabled: yes
+    gpgcheck: yes
+
+- name: Install required packages
+  package:
+    name:
+      - grafana
+      - beegfs-mon
+      - beegfs-mon-grafana
+      - grafana-influxdb
+      - influxdb
+
+- name: Add BeeGFS maanager name in beegfs-mon config file
+  lineinfile:
+    path: /etc/selinux/config
+    regexp: '^sysMgmtdHost                 ='
+    line: "sysMgmtdHost                 =  {{ beegfs_mgmt_dns }}"
+
+- name: Import BeeGFS Grafana Dashboard
+  shell: "/opt/beegfs/scripts/grafana/import-dashboards default"
+  args:
+    chdir: /opt/beegfs/scripts/grafana
+    executable: /bin/bash
+
+- name: Start and enable services
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - grafana-server
+    - influxdb
+    - beegfs-mon
