@@ -5,7 +5,7 @@ data_blocks: 8
 parity_blocks: 2
 
 mgmt_volume_name: "mgmtd1"
-mgmt_size: "10G"
+mgmt_size: "400G"
 mgmt_raid_level: "ec"
 mgmt_stripe_width: "2"
 mgmt_mount_point: "/beegfs/mgmtd"
