@@ -6,7 +6,7 @@ max_local_nvmeqs: 32
 configured_nics: "ib0;ib2"
 
 meta_size: "150G"
-storage_size: "25T"
+storage_size: "29T"
 protection_level: full # full, minimal, ignore
 data_blocks: 8
 parity_blocks: 2
