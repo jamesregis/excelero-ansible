@@ -40,7 +40,7 @@
 - name: "Create NVMesh volume ({{ volume_name }})"
   shell:
     cmd: >
-      nvmesh volume create -n {{ volume_name }} -rl {{ volume_raid_level }} -c {{ volume_size }}
+      nvmesh volume create -n {{ volume_name }} -rl {{ volume_raid_level }} -c {{ volume_size }} --enable-crc-check False
       --protection-level {{ protection_level }} --data-blocks {{ data_blocks }}
       --parity-blocks {{ parity_blocks }}
     executable: /bin/bash
