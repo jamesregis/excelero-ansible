@@ -1,8 +1,8 @@
 ---
 
 # dnf/yum repositosry credentials
-excelero_username: "mila-lab"
-excelero_password: "Ibm#Mila#Ex"
+excelero_username: "my-username"
+excelero_password: "my-password"
 
 ## redhat/centos/rockylinux version
 excelero_repository_version: "8.2"
