@@ -1,5 +1,8 @@
 # excelero-ansible
 
+thanks to @goldyfruit
+
+
 ### Configuration and Usage
 This project assumes you have a basic knowledge of how Ansible works and have
 already prepared your hosts for configuration by Ansible.
