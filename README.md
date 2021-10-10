@@ -46,7 +46,7 @@ You must have a playbook to pass to the ansible-playbook command when deploying 
 
 Rename the sample playbook:   
 
-mv site.yml.sample site.yml  
+`mv site.yml.sample site.yml`
   
 You must have a playbook to pass to the ansible-playbook command when deploying your cluster. There is a sample playbook at the root of the excelero-ansible project called *excelero.yml.sample*. This playbook should work fine for most usages, but it does include by default every daemon group which might not be appropriate for your cluster setup. Perform the following steps to prepare your playbook:
 
